@@ -1,34 +1,52 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+// import reactLogo from './assets/react.svg'
+// import viteLogo from '/vite.svg'
 import './App.css'
+// Provided the chatscope styling template to out components
+import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
+import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [messages, setMessages] = useState([
+    {
+      message: "Hello, I am ChatGPT",
+      sender: "ChatGpt"
+    }
+  ]) //[]
+  
+  const handleSend = async (message) => {
+    const newMessage = {
+      message: message,
+      sender: "user",
+      direction: "outgoing"
+    }
+    const newMessages = [...messages, newMessage ] // All of thge old messages plus the new message
+  
+    // Update the message state
+    setMessages(newMessages)
+  
+    // process the message to chatgpt (send it over the response)
+  }
+
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+   <div className="App">
+      <div style={{ position: "relative", height: "800px", width: "700px"}}>
+        <MainContainer>
+          <ChatContainer>
+            <MessageList>
+              {messages.map((message, i) => {
+                return <Message key={i} model={message} />
+              })}
+            </MessageList>
+            <MessageInput placeholder="Type message here" onSend={handleSend} />
+
+          </ChatContainer>
+        </MainContainer>
+
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+
+   </div>
   )
 }
 
