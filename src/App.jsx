@@ -79,9 +79,19 @@ function App() {
       return data.json();
       // Another .then to allow us to grab the new JSOn data
     }).then((data) => {
-      // For now just log this data
-      // console.log(data);
+      // Log to show the structure of the response in the console
       console.log(data.choices[0].message.content)
+      // Now we need to show this message to our user in the UI using the setMessages function
+      setMessages(
+        [
+          ...chatMessages, {
+          message: data.choices[0].message.content,
+          sender: "ChatGPT"
+          }
+        ]
+      );
+      // Once we get the response we need to setTyping to false again
+      setTyping(false);
     })
   }
 
