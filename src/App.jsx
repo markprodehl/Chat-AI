@@ -80,7 +80,8 @@ function App() {
       // Another .then to allow us to grab the new JSOn data
     }).then((data) => {
       // For now just log this data
-      console.log(data);
+      // console.log(data);
+      console.log(data.choices[0].message.content)
     })
   }
 
