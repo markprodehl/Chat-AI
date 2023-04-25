@@ -26,7 +26,7 @@ function App() {
       direction: "outgoing"
     }
 
-    const newMessages = [...messages, newMessage ] // All of thge old messages plus the new message
+    const newMessages = [...messages, newMessage ] // By adding all of the messages and the newMessage this will allow ChatGPT to keep context of teh conversation
     // Update the message state
     setMessages(newMessages);
     // Set a typing indicator (chatgpt is typing)
@@ -52,10 +52,12 @@ function App() {
 
     // role: "user" -> message from the user
     // role "assistant" -> message from ChatGPT
-    // role "system" -> one message defining how we want ChatGPT to talk. This is a really cool customization that most won't have access to
+    // role "system" -> A message defining how we want ChatGPT to talk. This is a really cool customization that most won't have access to
     const systemMessage = {
       role: "system",
-      content: "Explain all concepts like I am 10 years old." // You can also add things like "Speak like a pirate", or "Explain like I am a software engineer with 10 years of experience"
+      // content: "Explain all concepts like I am 10 years old." // You can also add things like "Speak like a pirate", or "Explain like I am a software engineer with 10 years of experience"
+      content: "Speak like a pirate." 
+      // content: "Explain like I am a software engineer with 10 years of experience." 
     }
 
     const apiRequestBody = {
@@ -101,7 +103,8 @@ function App() {
         <MainContainer>
           <ChatContainer>
             <MessageList
-              // If yping is set to true display the TypingIndicator element, otherwise null
+              scrollBehavior="smooth"
+              // If typing is set to true display the TypingIndicator element, otherwise null
               typingIndicator={typing ? <TypingIndicator content="ChatGPT is typing"/> : null}
             >
               {messages.map((message, i) => {
