@@ -22,22 +22,19 @@
 
 .message-list-container {
   flex: 1;
-  /* overflow-y: scroll; */
   height: calc(100% - 60px); /* subtract the height of message-input-container */
-  /* -webkit-overflow-scrolling: touch; */
 }
-
 
 .message-list {
   padding: 16px;
   overflow-y: scroll;
   border-radius: 8px;
-  -webkit-overflow-scrolling: touch;
+  /* -webkit-overflow-scrolling: touch; */
 }
 
 .scollbar-container {
   overflow-y: scroll;
-  touch-action: manipulation; /* add this property for smooth scrolling on touch devices */
+  touch-action: manipulation; 
   -webkit-overflow-scrolling: touch;
 }
 
