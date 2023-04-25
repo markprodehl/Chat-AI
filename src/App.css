@@ -31,6 +31,7 @@
   border-radius: 8px;
   overflow-y: scroll;
   touch-action: pan-y; /* add this property for smooth scrolling on touch devices */
+  -webkit-overflow-scrolling: touch;
 }
 
 .message-input-container {
