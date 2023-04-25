@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
+import { Element, animateScroll } from 'react-scroll';
 
 function ChatAI() {
   const VITE_MY_OPENAI_API_KEY = import.meta.env.VITE_MY_OPENAI_API_KEY
@@ -13,6 +14,18 @@ function ChatAI() {
       sender: "ChatGpt"
     }
   ]) //[]
+
+  const scrollToBottom = () => {
+    animateScroll.scrollToBottom({
+      containerId: 'messageList',
+    });
+  };
+
+  // Call scrollToBottom() whenever the messages change, including when the typing indicator is updated.
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, typing]);
+
   
   const handleSend = async (message) => {
     const newMessage = {
@@ -100,9 +113,11 @@ function ChatAI() {
             scrollBehavior="smooth"
             typingIndicator={typing ? <TypingIndicator content="ChatGPT is typing" /> : null}
           >
-            {messages.map((message, i) => {
-              return <Message key={i} model={message} />;
-            })}
+            <Element name="messageList" id="messageList">
+              {messages.map((message, i) => {
+                return <Message key={i} model={message} />;
+              })}
+            </Element>
           </MessageList>
           <MessageInput className="message-input-container" placeholder="Type message here" onSend={handleSend} />
         </ChatContainer>

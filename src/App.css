@@ -29,7 +29,6 @@
   padding: 16px;
   overflow-y: scroll;
   border-radius: 8px;
-  /* -webkit-overflow-scrolling: touch; */
 }
 
 .scollbar-container {
@@ -38,9 +37,6 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.message-input-container {
-  padding: 16px;
-}
 
 .message-input {
   width: 100%;
