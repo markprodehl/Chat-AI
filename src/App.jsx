@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-import { MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
+import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
 
 function ChatAI() {
   const VITE_MY_OPENAI_API_KEY = import.meta.env.VITE_MY_OPENAI_API_KEY
@@ -93,8 +93,8 @@ function ChatAI() {
 
   return (
     <div className="chat-ai">
-      <div className="chat-container">
-        <div className="message-list-container">
+      <MainContainer className="chat-container">
+        <ChatContainer className="message-list-container">
           <MessageList
             className="message-list"
             scrollBehavior="smooth"
@@ -104,14 +104,11 @@ function ChatAI() {
               return <Message key={i} model={message} />;
             })}
           </MessageList>
-        </div>
-        <div className="message-input-container">
-          <MessageInput className="message-input" placeholder="Type message here" onSend={handleSend} />
-        </div>
-      </div>
+          <MessageInput className="message-input-container" placeholder="Type message here" onSend={handleSend} />
+        </ChatContainer>
+      </MainContainer>
     </div>
   );
-  
 }
 
 export default ChatAI
