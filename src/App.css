@@ -5,6 +5,27 @@
   text-align: center;
 }
 
+/* Centering the ChatAI component */
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 600px) {
+  /* Adjusting the height and width of the ChatContainer */
+  .cs-message-list {
+    height: calc(100vh - 200px);
+    width: 100%;
+  }
+  /* Adjusting the height of the MessageInput */
+  .cs-message-input {
+    height: 60px;
+  }
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
