@@ -92,25 +92,26 @@ function ChatAI() {
   }
 
   return (
-   <div className="App">
-      <div style={{ position: "relative", height: "800px", width: "700px"}}>
-        <MainContainer>
-          <ChatContainer>
-            <MessageList
-              scrollBehavior="smooth"
-              // If typing is set to true display the TypingIndicator element, otherwise null
-              typingIndicator={typing ? <TypingIndicator content="ChatGPT is typing"/> : null}
-            >
-              {messages.map((message, i) => {
-                return <Message key={i} model={message} />
-              })}
-            </MessageList>
-            <MessageInput placeholder="Type message here" onSend={handleSend} />
-          </ChatContainer>
-        </MainContainer>
+    <div className="chat-ai">
+      <div className="chat-container">
+        <div className="message-list-container">
+          <MessageList
+            className="message-list"
+            scrollBehavior="smooth"
+            typingIndicator={typing ? <TypingIndicator content="ChatGPT is typing" /> : null}
+          >
+            {messages.map((message, i) => {
+              return <Message key={i} model={message} />;
+            })}
+          </MessageList>
+        </div>
+        <div className="message-input-container">
+          <MessageInput className="message-input" placeholder="Type message here" onSend={handleSend} />
+        </div>
       </div>
-   </div>
-  )
+    </div>
+  );
+  
 }
 
 export default ChatAI
