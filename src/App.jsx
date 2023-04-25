@@ -1,16 +1,10 @@
 import { useState } from 'react'
-
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
 import './App.css'
-// Provided the chatscope styling template to out components
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
+import { API_KEY } from './../config';
 
-// The APY_KEY will allow us to make calls to OpenAI from our personal account
-const API_KEY = "YOUR_API_KEY"
-
-function App() {
+function ChatAI() {
   const [typing, setTyping] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -55,9 +49,8 @@ function App() {
     // role "system" -> A message defining how we want ChatGPT to talk. This is a really cool customization that most won't have access to
     const systemMessage = {
       role: "system",
-      // content: "Explain all concepts like I am 10 years old." // You can also add things like "Speak like a pirate", or "Explain like I am a software engineer with 10 years of experience"
-      content: "Speak like a pirate." 
-      // content: "Explain like I am a software engineer with 10 years of experience." 
+      content: "Explain all concepts like I am 10 years old." // You can also add things like "Speak like a pirate", or "Explain like I am a software engineer with 10 years of experience"
+      // content: "Speak like philosopher." 
     }
 
     const apiRequestBody = {
@@ -119,4 +112,4 @@ function App() {
   )
 }
 
-export default App
+export default ChatAI
