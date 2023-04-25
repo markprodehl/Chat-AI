@@ -24,13 +24,13 @@
   flex: 1;
   overflow: auto;
   height: calc(100% - 60px); /* subtract the height of message-input-container */
-  overflow-y: scroll;
-  touch-action: pan-y; /* add this property for smooth scrolling on touch devices */
 }
 
 .message-list {
   padding: 16px;
   border-radius: 8px;
+  overflow-y: scroll;
+  touch-action: pan-y; /* add this property for smooth scrolling on touch devices */
 }
 
 .message-input-container {
