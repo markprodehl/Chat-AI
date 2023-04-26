@@ -69,6 +69,8 @@
     }
     
     .message-input-container {
+        display: flex;
+        flex-wrap: nowrap; /* Ensure the elements don't wrap */
         padding: 10px;
     }
 
