@@ -120,7 +120,7 @@ function ChatAI() {
               </div>
             ))}
             {typing && (
-              <div className="typing-indicator">ChatGPT is typing...</div>
+              <div className="typing-indicator typing-animation">ChatGPT is typing...</div>
             )}
           </div>
         </div>
