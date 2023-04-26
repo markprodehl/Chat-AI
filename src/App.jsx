@@ -98,36 +98,33 @@ function ChatAI() {
 
   // To keep messages on screen when the keyboard pops up on mobile 
   const updateChatContainerHeight = useCallback(() => {
-    // Get the input element and chat container from the DOM
-    const inputElement = document.querySelector('.message-input');
+    // Get the chat container from the DOM
     const chatContainer = document.querySelector('.chat-container');
   
-    // Function to apply the mobile chat container height adjustment
-    const applyMobileHeight = () => {
+    // Function to handle window resize events
+    const handleResize = () => {
       // Check if the current viewport width is 768px or less (mobile)
       if (window.innerWidth <= 768) {
-        // If on mobile, adjust the chat container height
-        // Subtract half of the window's inner height and the message-input-container height (60px)
-        chatContainer.style.height = `calc(100vh - ${window.innerHeight / 2}px - 60px)`;
+        // Set the chat container height based on the window's inner height
+        // Subtract the message-input-container height (60px)
+        chatContainer.style.height = `calc(${window.innerHeight}px - 60px)`;
+      } else {
+        // If on desktop, set the chat container height to its original value
+        chatContainer.style.height = 'calc(100vh - 60px)';
       }
     };
   
-    // Function to reset the chat container height to its original value
-    const resetHeight = () => {
-      chatContainer.style.height = 'calc(100vh - 60px)';
-    };
+    // Call handleResize once initially to set the correct height
+    handleResize();
   
-    // Add event listeners for the 'focus' and 'blur' events on the input element
-    // 'focus' event is triggered when the input gets focus (e.g., when the user taps on it)
-    // 'blur' event is triggered when the input loses focus (e.g., when the user taps outside it)
-    inputElement.addEventListener('focus', applyMobileHeight);
-    inputElement.addEventListener('blur', resetHeight);
+    // Add an event listener for the 'resize' event on the window
+    // 'resize' event is triggered when the window is resized (e.g., when the keyboard pops up)
+    window.addEventListener('resize', handleResize);
   
-    // Clean up event listeners when the component is unmounted
+    // Clean up the event listener when the component is unmounted
     // This prevents memory leaks and ensures the proper functioning of the component
     return () => {
-      inputElement.removeEventListener('focus', applyMobileHeight);
-      inputElement.removeEventListener('blur', resetHeight);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
   
