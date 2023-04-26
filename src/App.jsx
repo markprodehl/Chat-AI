@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import './App.css'
-import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
+// import './App.css'
+import './styles.css'
+// import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
+// import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
 
 function ChatAI() {
   const VITE_MY_OPENAI_API_KEY = import.meta.env.VITE_MY_OPENAI_API_KEY
@@ -93,22 +94,43 @@ function ChatAI() {
 
   return (
     <div className="chat-ai">
-      <MainContainer className="chat-container">
-        <ChatContainer className="message-list-container">
-          <MessageList
-            className="message-list"
-            scrollBehavior="smooth"
-            typingIndicator={typing ? <TypingIndicator content="ChatGPT is typing" /> : null}
-          >
-            {messages.map((message, i) => {
-              return <Message key={i} model={message} />;
-            })}
-          </MessageList>
-          <MessageInput className="message-input-container" placeholder="Type message here" onSend={handleSend} />
-        </ChatContainer>
-      </MainContainer>
+      <div className="chat-container">
+        <div className="message-list-container">
+          <div className="message-list">
+            {messages.map((message, i) => (
+              <div
+                key={i}
+                className={`message ${
+                  message.sender === 'ChatGPT'
+                    ? 'message-incoming'
+                    : 'message-outgoing'
+                }`}
+              >
+                {message.message}
+              </div>
+            ))}
+            {typing && (
+              <div className="typing-indicator">ChatGPT is typing...</div>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="message-input-container">
+        <input
+          className="message-input"
+          type="text"
+          placeholder="Type message here"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSend(e.target.value);
+              e.target.value = '';
+            }
+          }}
+        />
+      </div>
     </div>
   );
+  
 }
 
 export default ChatAI
