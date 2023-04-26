@@ -74,12 +74,27 @@
 
     .message-input {
         border: none;
-        border-radius: 8px;
+        border-radius: 8px 0 0 8px;
         padding: 10px;
         font-size: 16px;
         width: 50vw;
         outline: none;
     }
+
+    .send-button {
+        background-color: #007bff;
+        border: none;
+        color: white;
+        padding: 10px 12px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 0 4px 4px 0;
+      }
+      
+      .send-button:hover {
+        background-color: #0069d9;
+      }
+      
 }
 
   /* On mobile, make the chat container full screen */
@@ -140,7 +155,7 @@
     }
 
     .message-input-container {
-        display: flex;
+        /* display: flex; */
         flex-direction: column;
         padding: 10px
     }
@@ -148,11 +163,25 @@
     .message-input {
         align-self: center;
         border: none;
-        border-radius: 8px;
+        border-radius: 8px 0 0 8px;
         padding: 10px;
         font-size: 16px;
         width: 50vw;
         outline: none;
     }
+
+    .send-button {
+        background-color: #007bff;
+        border: none;
+        color: white;
+        padding: 10px 12px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 0 4px 4px 0;
+      }
+      
+      .send-button:hover {
+        background-color: #0069d9;
+      }
   }
   

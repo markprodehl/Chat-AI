@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import './styles.css';
+import 'font-awesome/css/font-awesome.min.css';
 
 function ChatAI() {
   const VITE_MY_OPENAI_API_KEY = import.meta.env.VITE_MY_OPENAI_API_KEY;
@@ -55,7 +56,7 @@ function ChatAI() {
     const systemMessage = {
       role: 'system',
       content: 'Explain all concepts like I am 10 years old.',
-       // content: "Speak like philosopher." 
+      //  content: "Speak like philosopher." 
     };
 
     const apiRequestBody = {
@@ -95,6 +96,12 @@ function ChatAI() {
       });
   }
 
+  const handleButtonClick = () => {
+    const inputElement = document.querySelector('.message-input');
+    handleSend(inputElement.value);
+    inputElement.value = '';
+  };
+
   return (
     <div className="chat-ai">
       <div className="chat-container" style={{ overflowY: 'scroll' }} ref={messageListRef}>
@@ -130,6 +137,12 @@ function ChatAI() {
             }
           }}
         />
+        <button
+          className="send-button"
+          onClick={handleButtonClick}
+        >
+          <i className="fa fa-paper-plane" aria-hidden="true"></i>
+        </button>
       </div>
     </div>
   );
