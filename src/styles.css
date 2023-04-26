@@ -29,8 +29,10 @@
   
     .message-incoming {
       align-self: flex-start;
-      background-color: rgb(0, 255, 251) !important;
-      color: rgb(76, 75, 75);
+      /* background-color: rgb(0, 255, 251) !important; */
+      background-color: rgba(0, 0, 0, 0.1) !important;
+      /* color: rgb(76, 75, 75); */
+      color: white;
     }
   
     .message-list-container {
@@ -158,14 +160,16 @@
   
     .message-outgoing {
       align-self: flex-end;
-      background-color: #00BFFF;
+      background-color: #85cce3;
       color: #FFF;
     }
   
     .message-incoming {
       align-self: flex-start;
-      background-color: rgb(0, 255, 251) !important;
-      color: rgb(76, 75, 75);
+      /* background-color: rgb(0, 255, 251) !important; */
+      background-color: rgba(0, 0, 0, 0.1) !important;
+      /* color: rgb(76, 75, 75); */
+      color: white;
     }
   
     .message-input-container {
