@@ -13,6 +13,7 @@ function ChatAI() {
     },
   ]); // []
 
+  const [chatContainerHeight, setChatContainerHeight] = useState('calc(100vh - 60px)');
   const messageListRef = useRef(null);
 
   const handleSend = async (message) => {
@@ -34,42 +35,6 @@ function ChatAI() {
   useEffect(() => {
     messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
   }, [messages]);
-
-  // Adjust the chat container height when the mobile keybaord pops up
-  const adjustChatContainer = () => {
-    // Select the chat container from the DOM
-    const chatContainer = document.querySelector('.chat-container');
-
-    // Function to handle the adjustment of the chat container's height
-    const handleResize = () => {
-      // Check if the current viewport width is 768px or less (mobile)
-      if (window.innerWidth <= 768) {
-        // Calculate the viewport height including the keyboard
-        const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-        // Set the chat container's height to the viewport height minus the input container's height (60px)
-        chatContainer.style.height = `${vh - 60}px`;
-      } else {
-         // If on desktop, set the chat container's height to its original value
-        chatContainer.style.height = 'calc(100vh - 60px)';
-      }
-       // Scroll the message list to the latest message
-      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-    };
-    // Call handleResize initially to set the correct height
-    handleResize();
-    // Add an event listener for the 'resize' event on the window
-    // 'resize' event is triggered when the window is resized (e.g., when the keyboard pops up)
-    window.addEventListener('resize', handleResize);
-    // Clean up the event listener when the component is unmounted
-    // This prevents memory leaks and ensures the proper functioning of the component
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  };
-
-  useEffect(() => {
-    return adjustChatContainer();
-  }, []);
 
   async function processMessageToChatGPT(chatMessages) {
      // chatMessages looks like this { sender: "user" or "ChatGPT", message: "The message content here"}
@@ -131,7 +96,29 @@ function ChatAI() {
         setTyping(false);
       });
   }
-  
+
+  const adjustChatContainer = () => {
+    if (window.innerWidth <= 768) {
+      const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+      setChatContainerHeight(`${vh - 60}px`);
+    } else {
+      setChatContainerHeight('calc(100vh - 60px)');
+    }
+    messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', adjustChatContainer);
+
+    return () => {
+      window.removeEventListener('resize', adjustChatContainer);
+    };
+  }, []);
+
+  useEffect(() => {
+    adjustChatContainer();
+  }, [messages]);
+
   const handleButtonClick = () => {
     const inputElement = document.querySelector('.message-input');
     handleSend(inputElement.value);
@@ -140,7 +127,11 @@ function ChatAI() {
 
   return (
     <div className="chat-ai">
-      <div className="chat-container" style={{ overflowY: 'scroll' }} ref={messageListRef}>
+      <div
+        className="chat-container"
+        style={{ overflowY: 'scroll', height: chatContainerHeight }}
+        ref={messageListRef}
+      >
         <div className="message-list-container">
           <div className="message-list">
             {messages.map((message, i) => (
@@ -173,9 +164,9 @@ function ChatAI() {
             }
           }}
         />
-        <button
-          className="send-button"
-          onClick={handleButtonClick}
+        <button 
+        className="send-button" 
+        onClick={handleButtonClick}
         >
           <i className="fa fa-paper-plane" aria-hidden="true"></i>
         </button>
