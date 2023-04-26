@@ -25,6 +25,8 @@ function ChatAI() {
     const newMessages = [...messages, newMessage] // By adding all of the messages and the newMessage this will allow ChatGPT to keep context of teh conversation
     // Update the message state
     setMessages(newMessages);
+    // Scroll to the bottom of the screen
+    scrollToBottom(); 
     // Set a typing indicator (chatgpt is typing)
     setTyping(true);
     // Process the message to chatgpt (send it over the response) with all the messages from our chat
@@ -34,6 +36,12 @@ function ChatAI() {
   useEffect(() => {
     messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
   }, [messages]);
+
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    }, 100);
+  };
 
   async function processMessageToChatGPT(chatMessages) {
      // chatMessages looks like this { sender: "user" or "ChatGPT", message: "The message content here"}
@@ -95,54 +103,6 @@ function ChatAI() {
         setTyping(false);
       });
   }
-
-  // To keep messages on screen when the keyboard pops up on mobile 
-  const updateChatContainerHeight = useCallback(() => {
-    // Get the chat container from the DOM
-    const chatContainer = document.querySelector('.chat-container');
-  
-    // Function to handle window resize events
-    const handleResize = () => {
-      // Check if the current viewport width is 768px or less (mobile)
-      if (window.innerWidth <= 768) {
-        // Set the chat container height based on the window's inner height
-        // Subtract the message-input-container height (60px)
-        chatContainer.style.height = `calc(${window.innerHeight}px - 60px)`;
-      } else {
-        // If on desktop, set the chat container height to its original value
-        chatContainer.style.height = 'calc(100vh - 60px)';
-      }
-    };
-  
-    // Call handleResize once initially to set the correct height
-    handleResize();
-  
-    // Add an event listener for the 'resize' event on the window
-    // 'resize' event is triggered when the window is resized (e.g., when the keyboard pops up)
-    window.addEventListener('resize', handleResize);
-  
-    // Clean up the event listener when the component is unmounted
-    // This prevents memory leaks and ensures the proper functioning of the component
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-  
-  useEffect(() => {
-    const scrollMessageList = () => {
-      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-    };
-  
-    // Timeout is added to ensure that scroll occurs after the resize event
-    const timeout = setTimeout(() => {
-      scrollMessageList();
-    }, 100);
-  
-    // Clean up the timeout when the component is unmounted
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [messages, updateChatContainerHeight]);
   
   const handleButtonClick = () => {
     const inputElement = document.querySelector('.message-input');
