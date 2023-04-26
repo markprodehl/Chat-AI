@@ -13,7 +13,6 @@ function ChatAI() {
     },
   ]); // []
 
-  const [chatContainerHeight, setChatContainerHeight] = useState('calc(100vh - 60px)');
   const messageListRef = useRef(null);
 
   const handleSend = async (message) => {
@@ -96,29 +95,7 @@ function ChatAI() {
         setTyping(false);
       });
   }
-
-  const adjustChatContainer = () => {
-    if (window.innerWidth <= 768) {
-      const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-      setChatContainerHeight(`${vh - 60}px`);
-    } else {
-      setChatContainerHeight('calc(100vh - 60px)');
-    }
-    messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', adjustChatContainer);
-
-    return () => {
-      window.removeEventListener('resize', adjustChatContainer);
-    };
-  }, []);
-
-  useEffect(() => {
-    adjustChatContainer();
-  }, [messages]);
-
+  
   const handleButtonClick = () => {
     const inputElement = document.querySelector('.message-input');
     handleSend(inputElement.value);
@@ -127,11 +104,7 @@ function ChatAI() {
 
   return (
     <div className="chat-ai">
-      <div
-        className="chat-container"
-        style={{ overflowY: 'scroll', height: chatContainerHeight }}
-        ref={messageListRef}
-      >
+      <div className="chat-container" style={{ overflowY: 'scroll' }} ref={messageListRef}>
         <div className="message-list-container">
           <div className="message-list">
             {messages.map((message, i) => (
@@ -164,9 +137,9 @@ function ChatAI() {
             }
           }}
         />
-        <button 
-        className="send-button" 
-        onClick={handleButtonClick}
+        <button
+          className="send-button"
+          onClick={handleButtonClick}
         >
           <i className="fa fa-paper-plane" aria-hidden="true"></i>
         </button>
