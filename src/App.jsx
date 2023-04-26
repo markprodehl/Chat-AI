@@ -6,6 +6,7 @@ function ChatAI() {
   const VITE_MY_OPENAI_API_KEY = import.meta.env.VITE_MY_OPENAI_API_KEY;
 
   const [typing, setTyping] = useState(false);
+  const [typingText, setTypingText] = useState('');
   const [messages, setMessages] = useState([
     {
       message: 'Hello, I am ChatGPT',
@@ -80,20 +81,49 @@ function ChatAI() {
         // Return the data as a JSON object
         return data.json();
       })
+
+      // USe this if you dont want the typing effect
+      // .then((data) => {
+      //   // Log to show the structure of the response in the console
+      // console.log(data.choices[0].message.content)
+      //  // Now we need to show this message to our user in the UI using the setMessages function
+      //   setMessages([
+      //     ...chatMessages,
+      //     {
+      //       message: data.choices[0].message.content,
+      //       sender: 'ChatGPT',
+      //     },
+      //   ]);
+      //    // Once we get the response we need to setTyping to false again
+      //   setTyping(false);
+      // });
+
+      // To add the TYPING EFFECT use this
       .then((data) => {
         // Log to show the structure of the response in the console
-      console.log(data.choices[0].message.content)
-       // Now we need to show this message to our user in the UI using the setMessages function
-        setMessages([
-          ...chatMessages,
-          {
-            message: data.choices[0].message.content,
-            sender: 'ChatGPT',
-          },
-        ]);
-         // Once we get the response we need to setTyping to false again
-        setTyping(false);
+        console.log(data.choices[0].message.content);
+        // Show the typing text one character at a time
+        let typingTimeout = 15; // You can adjust the typing speed by changing this value
+        const responseText = data.choices[0].message.content;
+        responseText.split('').forEach((char, i) => {
+          setTimeout(() => {
+            setTypingText((prevTypingText) => prevTypingText + char);
+          }, typingTimeout * i);
+        });
+        // After displaying the whole message, update the messages state and clear the typingText state
+        setTimeout(() => {
+          setMessages([
+            ...chatMessages,
+            {
+              message: responseText,
+              sender: 'ChatGPT',
+            },
+          ]);
+          setTypingText('');
+          setTyping(false);
+        }, typingTimeout * responseText.length);
       });
+      
   }
   
   const handleButtonClick = () => {
@@ -120,7 +150,9 @@ function ChatAI() {
               </div>
             ))}
             {typing && (
-              <div className="typing-indicator typing-animation">ChatGPT is typing...</div>
+              <div className="typing-indicator typing-animation">
+                AI Processing: <span>{typingText}</span>
+              </div>
             )}
           </div>
         </div>
