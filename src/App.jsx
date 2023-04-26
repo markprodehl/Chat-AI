@@ -9,8 +9,9 @@ function ChatAI() {
   const [typingText, setTypingText] = useState('');
   const [messages, setMessages] = useState([
     {
-      message: 'Hello, I am ChatGPT',
+      message: 'Hello, I am your AI assistant. Feel free to ask me anything.',
       sender: 'ChatGpt',
+      direction: 'incoming'
     },
   ]); // []
 
@@ -117,6 +118,7 @@ function ChatAI() {
             {
               message: responseText,
               sender: 'ChatGPT',
+              direction: 'incoming'
             },
           ]);
           setTypingText('');
@@ -141,7 +143,7 @@ function ChatAI() {
               <div
                 key={i}
                 className={`message ${
-                  message.sender === 'ChatGPT'
+                  message.direction === 'incoming'
                     ? 'message-incoming'
                     : 'message-outgoing'
                 }`}
