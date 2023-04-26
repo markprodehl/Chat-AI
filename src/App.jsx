@@ -15,6 +15,34 @@ function ChatAI() {
 
   const messageListRef = useRef(null);
 
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+
+  useEffect(() => {
+    // Listen for the resize and orientationchange events
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+
+    // Clean up the event listeners on unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
+  }, []);
+
+  const handleResize = () => {
+    // Calculate the height of the keyboard
+    const keyboardHeight = window.innerHeight - document.documentElement.clientHeight;
+
+    // Update the --keyboard-height CSS variable
+    document.documentElement.style.setProperty('--keyboard-height', `${keyboardHeight}px`);
+
+    // Update the keyboardOpen state based on the keyboard height
+    setKeyboardOpen(keyboardHeight > 0);
+  };
+
+  // Add the 'keyboard-open' class to the chat container when the keyboard is open
+  const chatContainerClass = `chat-container ${keyboardOpen ? 'keyboard-open' : ''}`;
+
   const handleSend = async (message) => {
     const newMessage = {
       message: message,
@@ -104,7 +132,7 @@ function ChatAI() {
 
   return (
     <div className="chat-ai">
-      <div className="chat-container" style={{ overflowY: 'scroll' }} ref={messageListRef}>
+      <div className={chatContainerClass} ref={messageListRef}>
         <div className="message-list-container">
           <div className="message-list">
             {messages.map((message, i) => (
