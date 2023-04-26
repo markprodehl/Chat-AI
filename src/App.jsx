@@ -129,8 +129,20 @@ function ChatAI() {
   }, []);
   
   useEffect(() => {
-    updateChatContainerHeight();
-  }, [updateChatContainerHeight]);
+    const scrollMessageList = () => {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    };
+  
+    // Timeout is added to ensure that scroll occurs after the resize event
+    const timeout = setTimeout(() => {
+      scrollMessageList();
+    }, 100);
+  
+    // Clean up the timeout when the component is unmounted
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [messages, updateChatContainerHeight]);
   
   const handleButtonClick = () => {
     const inputElement = document.querySelector('.message-input');
