@@ -7,15 +7,29 @@ function ChatAI() {
 
   const [typing, setTyping] = useState(false);
   const [typingText, setTypingText] = useState('');
+  const [systemMessageText, setSystemMessageText] = useState('');
+  const [initialized, setInitialized] = useState(false);
   const [messages, setMessages] = useState([
     {
       message: 'Hello, I am your AI assistant. Feel free to ask me anything.',
       sender: 'ChatGpt',
-      direction: 'incoming'
+      direction: 'incoming',
     },
   ]); // []
 
   const messageListRef = useRef(null);
+
+  useEffect(() => {
+    if (!initialized) {
+      const storedSystemMessageText = localStorage.getItem("systemMessageText");
+      setSystemMessageText(
+        storedSystemMessageText || "Explain all concepts like I am 10 years old."
+      );
+      setInitialized(true);
+    } else {
+      localStorage.setItem("systemMessageText", systemMessageText);
+    }
+  }, [initialized, systemMessageText]);
 
   const handleSend = async (message) => {
     const newMessage = {
@@ -177,6 +191,23 @@ function ChatAI() {
         >
           <i className="fa fa-paper-plane" aria-hidden="true"></i>
         </button>
+      </div>
+      <div className="system-message-container">
+        <label htmlFor="system-message-input">System Message:</label>
+        <select
+          id="system-message-selection"
+          value={systemMessageText}
+          onChange={(e) => setSystemMessageText(e.target.value)}
+        >
+          <option value="Explain all concepts like I am 10 years old.">
+            Explain all concepts like I am 10 years old.
+          </option>
+          <option value="Explain all concepts like I am a high school student.">
+            Explain all concepts like I am a high school student.
+          </option>
+          {/* Add more options here as needed */}
+        </select>
+        <button onClick={() => handleSend(systemMessageText)}>Send</button>
       </div>
     </div>
   );
