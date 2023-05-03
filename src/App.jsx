@@ -19,6 +19,14 @@ function ChatAI() {
 
   const messageListRef = useRef(null);
 
+  const personalityOptions = [
+    { label: '10 year old', value: 'Explain all concepts like I am 10 years old.' },
+    { label: 'High school student', value: 'Explain all concepts like I am a high school student.' },
+    { label: 'Pirate', value: 'Explain all concepts like I am a pirate.' },
+    { label: 'Clown', value: 'Explain all concepts like I am a clown.' },
+    // Add more personality options here as needed
+  ];
+
   useEffect(() => {
     if (!initialized) {
       const storedSystemMessageText = localStorage.getItem("systemMessageText");
@@ -71,7 +79,7 @@ function ChatAI() {
     // role "system" -> A message defining how we want ChatGPT to talk. This is a really cool customization that most won't have access to
     const systemMessage = {
       role: 'system',
-      content: 'Explain all concepts like I am 10 years old.',
+      content: systemMessageText
       //  content: "Speak like philosopher." 
     };
 
@@ -139,7 +147,6 @@ function ChatAI() {
           setTyping(false);
         }, typingTimeout * responseText.length);
       });
-      
   }
   
   const handleButtonClick = () => {
@@ -193,27 +200,18 @@ function ChatAI() {
         </button>
       </div>
       <div className="system-message-container">
-        <label htmlFor="system-message-input">Set personality: </label>
+        <label htmlFor="system-message-input">Personality: </label>
         <select
           id="system-message-selection"
           value={systemMessageText}
           onChange={(e) => setSystemMessageText(e.target.value)}
         >
-          <option value="Explain all concepts like I am 10 years old.">
-            10 year old
-          </option>
-          <option value="Explain all concepts like I am a high school student.">
-            High school student
-          </option>
-          <option value="Explain all concepts like I am a pirate.">
-            Pirate
-          </option>
-          <option value="Explain all concepts like I am a clown.">
-            Clown
-          </option>
-          {/* Add more options here as needed */}
+          {personalityOptions.map((option, index) => (
+            <option key={index} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
-        <button onClick={() => handleSend(systemMessageText)}>Set</button>
       </div>
     </div>
   );
