@@ -2,6 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import './styles.css';
 import 'font-awesome/css/font-awesome.min.css';
 
+import personalityOptions from './components/PersonalityOptions';
+import processMessageToChatGPT from './components/ProcessMessageToChatGPT';
+
 function ChatAI() {
   const VITE_MY_OPENAI_API_KEY = import.meta.env.VITE_MY_OPENAI_API_KEY;
 
@@ -18,14 +21,6 @@ function ChatAI() {
   ]); // []
 
   const messageListRef = useRef(null);
-
-  const personalityOptions = [
-    { label: '10 year old', value: 'Explain all concepts like I am 10 years old.' },
-    { label: 'High school student', value: 'Explain all concepts like I am a high school student.' },
-    { label: 'Pirate', value: 'Explain all concepts like I am a pirate.' },
-    { label: 'Clown', value: 'Explain all concepts like I am a clown.' },
-    // Add more personality options here as needed
-  ];
 
   useEffect(() => {
     if (!initialized) {
@@ -51,104 +46,14 @@ function ChatAI() {
     setMessages(newMessages);
     // Set a typing indicator (chatgpt is typing)
     setTyping(true);
-    // Process the message to chatgpt (send it over the response) with all the messages from our chat
-    await processMessageToChatGPT(newMessages);
+    // Process the message to chatgpt (send it over the response) with all the messages from our chat so that the context of the conversation is maintained
+    await processMessageToChatGPT(newMessages, VITE_MY_OPENAI_API_KEY, systemMessageText, setMessages, setTyping, setTypingText);
   };
 
   useEffect(() => {
     messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
   }, [messages]);
 
-  async function processMessageToChatGPT(chatMessages) {
-     // chatMessages looks like this { sender: "user" or "ChatGPT", message: "The message content here"}
-    // To send messages to the API we need to make a new API Array, which needs to be in this format for the frontend { role: "user", or "assistant", content: "The message content here" }
-    // To format the API data we can build a new array by mapping through the all of the chatMessages and create a new object
-    let apiMessages = chatMessages.map((messageObject) => {
-      // Define role as an empty string
-      let role = '';
-      if (messageObject.sender === 'ChatGPT') {
-        role = 'assistant';
-      } else {
-        role = 'user';
-      }
-      return { role: role, content: messageObject.message };
-    });
-
-    // role: "user" -> message from the user
-    // role "assistant" -> message from ChatGPT
-    // role "system" -> A message defining how we want ChatGPT to talk. This is a really cool customization that most won't have access to
-    const systemMessage = {
-      role: 'system',
-      content: systemMessageText
-      //  content: "Speak like philosopher." 
-    };
-
-    const apiRequestBody = {
-      model: 'gpt-3.5-turbo',
-      "messages" : [
-        systemMessage, // Putting this at the front of the messages is require within the messages array to get processed
-        ...apiMessages // [message1, message2, message3]
-      ]
-    };
-
-    await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'post',
-      headers: {
-        Authorization: 'Bearer ' + VITE_MY_OPENAI_API_KEY,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(apiRequestBody),
-       // Now we need to grab the data being returned from OpenAI
-    })
-      .then((data) => {
-        // Return the data as a JSON object
-        return data.json();
-      })
-
-      // USe this if you dont want the typing effect
-      // .then((data) => {
-      //   // Log to show the structure of the response in the console
-      // console.log(data.choices[0].message.content)
-      //  // Now we need to show this message to our user in the UI using the setMessages function
-      //   setMessages([
-      //     ...chatMessages,
-      //     {
-      //       message: data.choices[0].message.content,
-      //       sender: 'ChatGPT',
-      //     },
-      //   ]);
-      //    // Once we get the response we need to setTyping to false again
-      //   setTyping(false);
-      // });
-
-      // To add the TYPING EFFECT use this
-      .then((data) => {
-        // Log to show the structure of the response in the console
-        console.log(data.choices[0].message.content);
-        // Show the typing text one character at a time
-        let typingTimeout = 15; // You can adjust the typing speed by changing this value
-        const responseText = data.choices[0].message.content;
-        responseText.split('').forEach((char, i) => {
-          setTimeout(() => {
-            setTypingText((prevTypingText) => prevTypingText + char);
-          }, typingTimeout * i);
-        });
-        // After displaying the whole message, update the messages state and clear the typingText state
-        setTimeout(() => {
-          setMessages([
-            ...chatMessages,
-            {
-              message: responseText,
-              sender: 'ChatGPT',
-              direction: 'incoming'
-            },
-          ]);
-          setTypingText('');
-          setTyping(false);
-        }, typingTimeout * responseText.length);
-      });
-  }
-  
   const handleButtonClick = () => {
     const inputElement = document.querySelector('.message-input');
     handleSend(inputElement.value);
@@ -173,8 +78,8 @@ function ChatAI() {
               </div>
             ))}
             {typing && (
-              <div className="typing-indicator typing-animation">
-                AI Processing: <span>{typingText}</span>
+              <div className="message message-incoming typing-indicator typing-animation">
+                AI processing: <span>{typingText}</span>
               </div>
             )}
           </div>
