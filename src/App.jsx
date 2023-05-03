@@ -193,21 +193,27 @@ function ChatAI() {
         </button>
       </div>
       <div className="system-message-container">
-        <label htmlFor="system-message-input">System Message:</label>
+        <label htmlFor="system-message-input">Set personality: </label>
         <select
           id="system-message-selection"
           value={systemMessageText}
           onChange={(e) => setSystemMessageText(e.target.value)}
         >
           <option value="Explain all concepts like I am 10 years old.">
-            Explain all concepts like I am 10 years old.
+            10 year old
           </option>
           <option value="Explain all concepts like I am a high school student.">
-            Explain all concepts like I am a high school student.
+            High school student
+          </option>
+          <option value="Explain all concepts like I am a pirate.">
+            Pirate
+          </option>
+          <option value="Explain all concepts like I am a clown.">
+            Clown
           </option>
           {/* Add more options here as needed */}
         </select>
-        <button onClick={() => handleSend(systemMessageText)}>Send</button>
+        <button onClick={() => handleSend(systemMessageText)}>Set</button>
       </div>
     </div>
   );
