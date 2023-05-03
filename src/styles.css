@@ -149,6 +149,7 @@
 @media (max-width: 767px) {
   .chat-ai {
     position: fixed;
+    height: 93%;
   }
 
   .chat-container {
