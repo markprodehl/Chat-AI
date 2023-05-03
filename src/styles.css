@@ -157,7 +157,7 @@
   }
 
   .chat-container.keyboard-open {
-    height: calc(100vh - 70px - var(--keyboard-height, 0px));
+    height: calc(100vh - 80px - var(--keyboard-height, 0px));
   }
 }
 
