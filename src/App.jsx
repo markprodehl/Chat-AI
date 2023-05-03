@@ -78,7 +78,7 @@ function ChatAI() {
               </div>
             ))}
             {typing && (
-              <div className="typing-indicator typing-animation">
+              <div className="message message-incoming typing-indicator typing-animation">
                 AI processing: <span>{typingText}</span>
               </div>
             )}
