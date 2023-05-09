@@ -1,10 +1,15 @@
+import { updateDoc, arrayUnion, doc, serverTimestamp } from 'firebase/firestore';
+import db from '../config/firebaseConfig';
+
+
 const processMessageToChatGPT = async (
     chatMessages,
     VITE_MY_OPENAI_API_KEY,
     systemMessageText,
     setMessages,
     setTyping,
-    setTypingText
+    setTypingText, 
+    conversationId
   ) => {
     // chatMessages looks like this { sender: "user" or "ChatGPT", message: "The message content here"}
     // To send messages to the API we need to make a new API Array, which needs to be in this format for the frontend { role: "user", or "assistant", content: "The message content here" }
@@ -68,7 +73,7 @@ const processMessageToChatGPT = async (
 
       // To add the TYPING EFFECT use this
 
-      .then((data) => {
+      .then(async (data) => {
         // Log to show the structure of the response in the console
         console.log(data.choices[0].message.content); // Displays the response in the browser console
         // Show the typing text one character at a time
@@ -81,7 +86,7 @@ const processMessageToChatGPT = async (
           }, typingTimeout * i);
         });
   
-        setTimeout(() => {
+        setTimeout(async () => {
           setMessages([
             ...chatMessages,
             {
@@ -90,6 +95,17 @@ const processMessageToChatGPT = async (
               direction: 'incoming',
             },
           ]);
+
+          // Save the conversation history to Firestore
+          const conversationRef = doc(db, 'conversations', conversationId);
+          await updateDoc(conversationRef, {
+            messages: arrayUnion({
+              userMessage: chatMessages[chatMessages.length - 1].message,
+              aiResponse: responseText,
+            }),
+            lastUpdated: serverTimestamp(),
+          });
+
           setTypingText('');
           setTyping(false);
         }, typingTimeout * responseText.length);

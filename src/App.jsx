@@ -5,6 +5,9 @@ import 'font-awesome/css/font-awesome.min.css';
 import personalityOptions from './components/PersonalityOptions';
 import processMessageToChatGPT from './components/ProcessMessageToChatGPT';
 
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import db from './config/firebaseConfig';
+
 function ChatAI() {
   const VITE_MY_OPENAI_API_KEY = import.meta.env.VITE_MY_OPENAI_API_KEY;
 
@@ -19,16 +22,29 @@ function ChatAI() {
       direction: 'incoming',
     },
   ]); // []
+  const [conversationId, setConversationId] = useState(null);
 
   const messageListRef = useRef(null);
 
   useEffect(() => {
+    const createNewConversation = async () => {
+      try {
+        const newConversationRef = await addDoc(collection(db, 'conversations'), {
+          createdAt: serverTimestamp(),
+        });
+        setConversationId(newConversationRef.id);
+      } catch (e) {
+        console.error('Error creating new conversation: ', e);
+      }
+    };
+  
     if (!initialized) {
       const storedSystemMessageText = localStorage.getItem("systemMessageText");
       setSystemMessageText(
         storedSystemMessageText || "Explain all concepts like I am 10 years old."
       );
       setInitialized(true);
+      createNewConversation();
     } else {
       localStorage.setItem("systemMessageText", systemMessageText);
     }
@@ -47,7 +63,17 @@ function ChatAI() {
     // Set a typing indicator (chatgpt is typing)
     setTyping(true);
     // Process the message to chatgpt (send it over the response) with all the messages from our chat so that the context of the conversation is maintained
-    await processMessageToChatGPT(newMessages, VITE_MY_OPENAI_API_KEY, systemMessageText, setMessages, setTyping, setTypingText);
+    if (conversationId) { // Check if conversationId is defined before calling processMessageToChatGPT
+      await processMessageToChatGPT(
+        newMessages,
+        VITE_MY_OPENAI_API_KEY,
+        systemMessageText,
+        setMessages,
+        setTyping,
+        setTypingText,
+        conversationId
+      );
+    }
   };
 
   useEffect(() => {
