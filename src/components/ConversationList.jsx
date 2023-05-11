@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import db from '../config/firebaseConfig';
 import PropTypes from 'prop-types';
@@ -7,6 +7,7 @@ import { IoIosMenu } from 'react-icons/io';
 function ConversationList({ setConversationId, setMessages }) {
   const [conversations, setConversations] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const conversationListRef = useRef(null); 
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -36,8 +37,21 @@ function ConversationList({ setConversationId, setMessages }) {
     setIsOpen(false); // close the menu when a conversation is clicked
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isOpen && conversationListRef.current && !conversationListRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
-    <div className="conversation-list">
+    <div className="conversation-list" ref={conversationListRef}>
       <div className="menu-icon" onClick={() => setIsOpen(!isOpen)}>
         <IoIosMenu size={24} />
       </div>
