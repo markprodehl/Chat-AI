@@ -55,7 +55,7 @@ function ConversationList({ setConversationId, setMessages }) {
       <div className="menu-icon" onClick={() => setIsOpen(!isOpen)}>
         <IoIosMenu size={24} />
       </div>
-      {isOpen && conversations.map((conversation, index) => (
+      {isOpen && conversations.reverse.map((conversation, index) => (
         <div
           key={index}
           className="conversation-item"
