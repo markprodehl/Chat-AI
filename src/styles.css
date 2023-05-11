@@ -68,6 +68,7 @@
   align-self: flex-start;
   background-color: rgba(0, 0, 0, 0.1) !important;
   color: white;
+  /* z-index: 1; */
 }
 
 .typing-indicator {
@@ -161,3 +162,21 @@
   }
 }
 
+.menu-icon {
+  position: absolute;
+  top: 10px; 
+  right: 10px; 
+  cursor: pointer;
+  color: white;
+}
+
+.conversation-list {
+  position: absolute;
+  top: 1.5rem; 
+  right: 0;
+  width: 150px;
+  background-color: #242424;
+  padding: 12px 16px;
+  z-index: 1;
+  color: white; 
+}
