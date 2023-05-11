@@ -4,8 +4,9 @@ import 'font-awesome/css/font-awesome.min.css';
 
 import personalityOptions from './components/PersonalityOptions';
 import processMessageToChatGPT from './components/ProcessMessageToChatGPT';
+import ConversationList from './components/ConversationList';
 
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore';
 import db from './config/firebaseConfig';
 
 function ChatAI() {
@@ -25,6 +26,43 @@ function ChatAI() {
   const [conversationId, setConversationId] = useState(null);
 
   const messageListRef = useRef(null);
+
+  useEffect(() => {
+    const fetchConversation = async (conversationId) => {
+      if (!conversationId) {
+        console.error("Error: conversationId is undefined.");
+        return;
+      }
+      
+      try {
+        const docRef = doc(db, 'conversations', conversationId);
+        const docSnap = await getDoc(docRef);
+    
+        if (docSnap.exists()) {
+          const docData = docSnap.data();
+          if (docData && docData.messages) {
+            setMessages(
+              docData.messages.map((messagePair) => [
+                { sender: 'user', message: messagePair.userMessage, direction: 'outgoing' },
+                { sender: 'ChatGPT', message: messagePair.aiResponse, direction: 'incoming' },
+              ]).flat()
+            );
+          } else {
+            console.log("No messages found in the conversation.");
+          }
+        } else {
+          console.log("No such document!");
+        }
+      } catch (e) {
+        console.error("Error fetching conversation: ", e);
+      }
+    };
+  
+    if (conversationId) {
+      fetchConversation(conversationId);
+    }
+  }, [conversationId]);
+  
 
   useEffect(() => {
     const createNewConversation = async () => {
@@ -88,6 +126,7 @@ function ChatAI() {
 
   return (
     <div className="chat-ai">
+      <ConversationList setConversationId={setConversationId} setMessages={setMessages} />
       <div className="chat-container" style={{ overflowY: 'scroll' }} ref={messageListRef}>
         <div className="message-list-container">
           <div className="message-list">
