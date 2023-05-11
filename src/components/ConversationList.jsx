@@ -55,15 +55,22 @@ function ConversationList({ setConversationId, setMessages }) {
       <div className="menu-icon" onClick={() => setIsOpen(!isOpen)}>
         <IoIosMenu size={24} />
       </div>
-      {isOpen && conversations.reverse.map((conversation, index) => (
-        <div
-          key={index}
-          className="conversation-item"
-          onClick={() => handleConversationClick(conversation)}
-        >
-          Conversation {index + 1}
-        </div>
-      ))}
+      {isOpen && conversations.slice().reverse().map((conversation, index) => {
+        const firstMessage = conversation.messages[0]?.userMessage || '';
+        const previewText = firstMessage.length > 20
+          ? `${firstMessage.slice(0, 20)}...`
+          : firstMessage;
+
+        return (
+          <div
+            key={index}
+            className="conversation-item"
+            onClick={() => handleConversationClick(conversation)}
+          >
+            {previewText}
+          </div>
+        );
+      })}
     </div>
   );
 }
