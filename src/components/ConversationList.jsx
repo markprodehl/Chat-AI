@@ -51,13 +51,17 @@ function ConversationList({ setConversationId, setMessages }) {
   }, [isOpen]);
 
   return (
-    <div className="conversation-list" ref={conversationListRef}>
+    <div className={`conversation-list ${isOpen ? 'list-open' : 'list-closed'}`} ref={conversationListRef}>
       <div className="menu-icon" onClick={() => setIsOpen(!isOpen)}>
-        <IoIosMenu size={24} />
+        <div className={`${isOpen ? 'hide-icon' : ''}`}>
+         <IoIosMenu size={24} />
+        </div>
+       
+        <div className={`${isOpen ? 'show-title' : 'hide-title'}`}>Conversation History</div>
       </div>
       {isOpen && conversations.slice().reverse().map((conversation, index) => {
         const firstMessage = conversation.messages[0]?.userMessage || '';
-        const previewText = firstMessage.length > 20
+        const previewText = firstMessage.length > 30
           ? `${firstMessage.slice(0, 20)}...`
           : firstMessage;
 
