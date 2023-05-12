@@ -135,6 +135,44 @@
   animation: typing 1s linear infinite;
 }
 
+.hide-title {
+  display: none; /* Hide the title for desktop */
+}
+
+.show-title {
+ display: none;
+}
+
+.conversation-list {
+  position: absolute;
+  top: 1.5rem; 
+  right: 0;
+  width: 250px;
+  background-color: #242424;
+  padding: 12px 16px;
+  z-index: 1;
+  color: white; 
+}
+
+.conversation-item {
+  box-shadow: 0px 4px 12px rgba(21, 20, 20, 0.5);
+  padding: 7px;
+}
+
+.conversation-item:hover {
+  background-color: rgb(52, 48, 48);
+  border-radius: 8px;
+}
+
+.menu-icon {
+  position: absolute;
+  top: -5px; 
+  right: 10px; 
+  padding-top: 10px;
+  cursor: pointer;
+  color: rgb(234, 232, 232);
+}
+
 /* Media queries */
 @media (min-width: 768px) {
   .chat-ai {
@@ -159,5 +197,32 @@
   .chat-container.keyboard-open {
     height: calc(100vh - 6-px - var(--keyboard-height, 0px));
   }
-}
 
+  .hide-icon {
+    display: none;
+  }
+  
+  .show-title {
+    display: unset; /* Unset the show-title hidden setting for desktop */
+    font-weight: bold;
+    padding-left: 10px;
+  }
+
+  .conversation-list {
+    position: absolute;
+    left: 0;
+    margin-left: 30px;
+    padding: 0;
+  }
+
+  .conversation-item {
+    padding: 5px 10px;
+    color: #00BFFF;
+    font-weight: bold;
+  }
+
+  .menu-icon {
+    top: -40px;
+    left: 0; 
+  }
+}
