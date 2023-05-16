@@ -5,9 +5,10 @@ import 'font-awesome/css/font-awesome.min.css';
 import personalityOptions from './components/PersonalityOptions';
 import processMessageToChatGPT from './components/ProcessMessageToChatGPT';
 import ConversationList from './components/ConversationList';
+import { signIn, signOut } from './components/authentication';
 
 import { collection, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore';
-import db from './config/firebaseConfig';
+import { db, auth } from './config/firebaseConfig';
 
 function ChatAI() {
   const VITE_MY_OPENAI_API_KEY = import.meta.env.VITE_MY_OPENAI_API_KEY;
@@ -24,8 +25,33 @@ function ChatAI() {
     },
   ]); // []
   const [conversationId, setConversationId] = useState(null);
-
   const messageListRef = useRef(null);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup subscription
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const handleSignIn = async () => {
+    const user = await signIn();
+    setUser(user);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    setUser(null);
+  };
 
   useEffect(() => {
     const fetchConversation = async (conversationId) => {
@@ -67,26 +93,36 @@ function ChatAI() {
   useEffect(() => {
     const createNewConversation = async () => {
       try {
-        const newConversationRef = await addDoc(collection(db, 'conversations'), {
-          createdAt: serverTimestamp(),
-        });
-        setConversationId(newConversationRef.id);
+        const user = auth.currentUser;
+        if (user) {
+          // console.log("USER", user)
+          const userId = user.uid;
+          const userRef = doc(db, 'users', userId); // Get the document reference to the current user
+          const newConversationRef = await addDoc(collection(userRef, 'conversations'), {
+            createdAt: serverTimestamp(),
+          });
+          setConversationId(newConversationRef.id);
+        }
       } catch (e) {
         console.error('Error creating new conversation: ', e);
       }
     };
   
+    // TODO - Save systemMessageText to the db rather than localStorage
     if (!initialized) {
       const storedSystemMessageText = localStorage.getItem("systemMessageText");
       setSystemMessageText(
         storedSystemMessageText || "Explain all concepts like I am 10 years old."
       );
       setInitialized(true);
-      createNewConversation();
+      // Need this timeout to allow setSystemMessageText execute. POTENTIAL ISSUES WITH THIS
+      setTimeout(() => {
+        createNewConversation();
+      }, 1000); // Set timeout here, adjust the time as needed
     } else {
       localStorage.setItem("systemMessageText", systemMessageText);
     }
-  }, [initialized, systemMessageText]);
+  }, [initialized, systemMessageText]);  
 
   const handleSend = async (message) => {
     const newMessage = {
@@ -126,6 +162,11 @@ function ChatAI() {
 
   return (
     <div className="chat-ai">
+      {user ? (
+        <button onClick={handleSignOut}>Sign Out</button>
+      ) : (
+        <button onClick={handleSignIn}>Sign In with Google</button>
+      )}
       <ConversationList setConversationId={setConversationId} setMessages={setMessages} />
       <div className="chat-container" style={{ overflowY: 'scroll' }} ref={messageListRef}>
         <div className="message-list-container">
