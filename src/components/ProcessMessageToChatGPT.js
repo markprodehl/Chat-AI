@@ -1,6 +1,5 @@
 import { updateDoc, arrayUnion, doc, serverTimestamp } from 'firebase/firestore';
-import db from '../config/firebaseConfig';
-
+import { db, auth } from '/src/config/firebaseConfig.js';
 
 const processMessageToChatGPT = async (
   chatMessages,
@@ -106,14 +105,25 @@ const processMessageToChatGPT = async (
       ]);
 
       // Save the conversation history to Firestore
-      const conversationRef = doc(db, 'conversations', conversationId);
-      await updateDoc(conversationRef, {
-        messages: arrayUnion({
-          userMessage: chatMessages[chatMessages.length - 1].message,
-          aiResponse: responseText,
-        }),
-        lastUpdated: serverTimestamp(),
-      });
+      const currentUser = auth.currentUser; // Initialize currentUser at the beginning
+      if (currentUser) {
+        const userId = currentUser.uid;
+        const userRef = doc(db, 'users', userId); // Get the document reference to the current user
+        const conversationRef = doc(userRef, 'conversations', conversationId); // Get the reference to the conversation document under the current user
+        const userMessage = chatMessages[chatMessages.length - 1]?.message || '';
+        const aiResponse = responseText || '';
+
+        await updateDoc(conversationRef, {
+          userId: userId,
+          messages: arrayUnion({
+            userMessage: userMessage,
+            aiResponse: aiResponse,
+          }),
+          lastUpdated: serverTimestamp(),
+        });
+      } else {
+        console.error('Error: User not authenticated.');
+      }
     });
   });
 };
