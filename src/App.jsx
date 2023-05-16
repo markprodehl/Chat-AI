@@ -124,7 +124,7 @@ function ChatAI() {
       // Need this timeout to allow setSystemMessageText execute. POTENTIAL ISSUES WITH THIS
       setTimeout(() => {
         createNewConversation();
-      }, 1000); // Set timeout here, adjust the time as needed
+      }, 2000); // Set timeout here, adjust the time as needed
     } else {
       localStorage.setItem("systemMessageText", systemMessageText);
     }
