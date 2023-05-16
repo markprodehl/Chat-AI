@@ -61,23 +61,29 @@ function ChatAI() {
       }
       
       try {
-        const docRef = doc(db, 'conversations', conversationId);
-        const docSnap = await getDoc(docRef);
+        const user = auth.currentUser;
+        if (user) {
+          const userId = user.uid;
+          const docRef = doc(db, 'users', userId );
+          const docSnap = await getDoc(docRef);
     
-        if (docSnap.exists()) {
-          const docData = docSnap.data();
-          if (docData && docData.messages) {
-            setMessages(
-              docData.messages.map((messagePair) => [
-                { sender: 'user', message: messagePair.userMessage, direction: 'outgoing' },
-                { sender: 'ChatGPT', message: messagePair.aiResponse, direction: 'incoming' },
-              ]).flat()
-            );
+          if (docSnap.exists()) {
+            const docData = docSnap.data();
+            if (docData && docData.messages) {
+              setMessages(
+                docData.messages.map((messagePair) => [
+                  { sender: 'user', message: messagePair.userMessage, direction: 'outgoing' },
+                  { sender: 'ChatGPT', message: messagePair.aiResponse, direction: 'incoming' },
+                ]).flat()
+              );
+            } else {
+              console.log("No messages found in the conversation.");
+            }
           } else {
-            console.log("No messages found in the conversation.");
+            console.log("No such document!");
           }
         } else {
-          console.log("No such document!");
+          console.error("Error: auth.currentUser is null.");
         }
       } catch (e) {
         console.error("Error fetching conversation: ", e);
