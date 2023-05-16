@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import db from '../config/firebaseConfig';
+import { collection, getDocs, query, orderBy, doc } from 'firebase/firestore';
+import { db, auth } from '/src/config/firebaseConfig.js';
 import PropTypes from 'prop-types';
 import { IoIosMenu } from 'react-icons/io';
 
@@ -11,31 +11,58 @@ function ConversationList({ setConversationId, setMessages }) {
 
   useEffect(() => {
     const fetchConversations = async () => {
-      const q = query(collection(db, 'conversations'), orderBy('lastUpdated', 'desc'));
-      const querySnapshot = await getDocs(q);
-      const conversationsArray = [];
-      querySnapshot.forEach((doc) => {
-        conversationsArray.push({
-          id: doc.id,
-          ...doc.data(),
+      const user = auth.currentUser;
+      if (user) {
+        const userId = user.uid;
+        const userRef = doc(db, 'users', userId);
+        const q = query(
+          collection(userRef, 'conversations'),
+          orderBy('lastUpdated', 'desc')
+        );
+        const querySnapshot = await getDocs(q);
+        const conversationsArray = [];
+        querySnapshot.forEach((doc) => {
+          conversationsArray.push({
+            id: doc.id,
+            ...doc.data(),
+          });
         });
-      });
-      setConversations(conversationsArray);
+        setConversations(conversationsArray);
+      }
     };
-
-    fetchConversations();
+  
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        fetchConversations();
+      }
+    });
+  
+    return () => {
+      unsubscribe();
+    };
   }, []);
+  
 
   const handleConversationClick = (conversation) => {
     setConversationId(conversation.id);
-    const messagesArray = conversation.messages.map((messageObj) => ({
-      message: messageObj.userMessage,
-      sender: 'user',
-      direction: 'outgoing',
-    }));
+  
+    const messagesArray = conversation.messages.flatMap((messageObj) => [
+      {
+        message: messageObj.userMessage,
+        sender: 'user',
+        direction: 'outgoing',
+      },
+      {
+        message: messageObj.aiResponse,
+        sender: 'ChatGPT',
+        direction: 'incoming',
+      },
+    ]);
+  
     setMessages(messagesArray);
     setIsOpen(false); // close the menu when a conversation is clicked
   };
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
