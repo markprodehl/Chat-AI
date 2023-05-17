@@ -7,7 +7,7 @@ import processMessageToChatGPT from './components/ProcessMessageToChatGPT';
 import ConversationList from './components/ConversationList';
 import { signIn, signOut } from './components/authentication';
 
-import { collection, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db, auth } from './config/firebaseConfig';
 
 function ChatAI() {
@@ -29,19 +29,51 @@ function ChatAI() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
+  const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      // Fetch the user's document from Firestore
+      const userRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(userRef);
 
-    // Cleanup subscription
-    return () => {
-      unsubscribe();
+      if (docSnap.exists()) {
+        // Get the data from the user's document
+        const userData = docSnap.data();
+
+        setUser(user);
+        // Set systemMessageText from the user's document data
+        setSystemMessageText(userData.systemMessageText);
+      } else {
+        console.log('No user document found!');
+      }
+    } else {
+      setUser(null);
+      setSystemMessageText("Explain all concepts like I am 10 years old."); // reset systemMessageText to default
+    }
+  });
+
+  // Cleanup subscription
+  return () => {
+    unsubscribe();
+  };
+}, []);
+
+  // Save systemMessageText to Firestore when it changes
+  useEffect(() => {
+    const saveSystemMessageText = async () => {
+      if (user && systemMessageText !== user.systemMessageText) {
+        try {
+          const userRef = doc(db, 'users', user.uid);
+          await updateDoc(userRef, {
+            systemMessageText: systemMessageText,
+          });
+        } catch (error) {
+          console.error('Error saving systemMessageText:', error);
+        }
+      }
     };
-  }, []);
+
+    saveSystemMessageText();
+  }, [systemMessageText, user]);
 
   const handleSignIn = async () => {
     const user = await signIn();
@@ -101,7 +133,6 @@ function ChatAI() {
       try {
         const user = auth.currentUser;
         if (user) {
-          // console.log("USER", user)
           const userId = user.uid;
           const userRef = doc(db, 'users', userId); // Get the document reference to the current user
           const newConversationRef = await addDoc(collection(userRef, 'conversations'), {
@@ -114,21 +145,11 @@ function ChatAI() {
       }
     };
   
-    // TODO - Save systemMessageText to the db rather than localStorage
-    if (!initialized) {
-      const storedSystemMessageText = localStorage.getItem("systemMessageText");
-      setSystemMessageText(
-        storedSystemMessageText || "Explain all concepts like I am 10 years old."
-      );
-      setInitialized(true);
-      // Need this timeout to allow setSystemMessageText execute. POTENTIAL ISSUES WITH THIS
-      setTimeout(() => {
-        createNewConversation();
-      }, 2000); // Set timeout here, adjust the time as needed
-    } else {
-      localStorage.setItem("systemMessageText", systemMessageText);
+    if (user && systemMessageText) {
+      createNewConversation();
     }
-  }, [initialized, systemMessageText]);  
+}, [user, systemMessageText]);
+ 
 
   const handleSend = async (message) => {
     const newMessage = {
@@ -142,6 +163,9 @@ function ChatAI() {
     setMessages(newMessages);
     // Set a typing indicator (chatgpt is typing)
     setTyping(true);
+    // if(!systemMessageText) {
+    //   console.log("In handlesend system message is undefined", systemMessageText)
+    // }
     // Process the message to chatgpt (send it over the response) with all the messages from our chat so that the context of the conversation is maintained
     if (conversationId) { // Check if conversationId is defined before calling processMessageToChatGPT
       await processMessageToChatGPT(
