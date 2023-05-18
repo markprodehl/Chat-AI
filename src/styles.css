@@ -178,6 +178,15 @@
   color: rgb(234, 232, 232);
 }
 
+.google-btn {
+  background-color: #242424;
+  border: none;
+}
+
+.google-icon:hover {
+ opacity: 0.8;
+}
+
 /* Media queries */
 @media (min-width: 768px) {
   .chat-ai {

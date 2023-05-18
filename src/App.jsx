@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import './styles.css';
 import 'font-awesome/css/font-awesome.min.css';
+import googleIcon from '../public/google_signin_dark.png';
 
 import personalityOptions from './components/PersonalityOptions';
 import processMessageToChatGPT from './components/ProcessMessageToChatGPT';
@@ -196,7 +197,10 @@ function ChatAI() {
       {user ? (
         ""
       ) : (
-        <button onClick={handleSignIn}>Sign In with Google</button>
+        <button className="google-btn" onClick={handleSignIn}>
+          <img className="google-icon" src={googleIcon} alt="Google sign-in" />
+          {/* <p className="google-btn-text">Sign in with Google</p> */}
+        </button>
       )}
   
       {user && (
