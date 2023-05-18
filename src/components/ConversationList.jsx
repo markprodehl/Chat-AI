@@ -3,7 +3,8 @@ import { collection, getDocs, query, orderBy, doc } from 'firebase/firestore';
 import { db, auth } from '/src/config/firebaseConfig.js';
 import PropTypes from 'prop-types';
 import { IoIosMenu } from 'react-icons/io';
-function ConversationList({ setConversationId, setMessages, handleSignOut }) {
+import personalityOptions from './PersonalityOptions';
+function ConversationList({ setConversationId, setMessages, handleSignOut, systemMessageText, setSystemMessageText}) {
   const [conversations, setConversations] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const conversationListRef = useRef(null); 
@@ -103,6 +104,20 @@ function ConversationList({ setConversationId, setMessages, handleSignOut }) {
               </div>
             );
           })}
+          <div className="system-message-container">
+            <label htmlFor="system-message-input">Personality: </label>
+            <select
+              id="system-message-selection"
+              value={systemMessageText}
+              onChange={(e) => setSystemMessageText(e.target.value)}
+            >
+              {personalityOptions.map((option, index) => (
+                <option key={index} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="conversation-item sign-out" onClick={handleSignOut}>
             Sign Out
           </div>
@@ -116,6 +131,8 @@ ConversationList.propTypes = {
   setConversationId: PropTypes.func.isRequired,
   setMessages: PropTypes.func.isRequired,
   handleSignOut: PropTypes.func.isRequired, // Add handleSignOut prop
+  systemMessageText: PropTypes.func.isRequired,
+  setSystemMessageText: PropTypes.func.isRequired,
 };
 
 export default ConversationList;

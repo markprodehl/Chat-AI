@@ -200,6 +200,8 @@ function ChatAI() {
             setConversationId={setConversationId}
             setMessages={setMessages}
             handleSignOut={handleSignOut}
+            systemMessageText={systemMessageText}
+            setSystemMessageText={setSystemMessageText}
           />
           <div className="chat-container" style={{ overflowY: 'scroll' }} ref={messageListRef}>
             <div className="message-list-container">
@@ -243,21 +245,6 @@ function ChatAI() {
             >
               <i className="fa fa-paper-plane" aria-hidden="true"></i>
             </button>
-          </div>
-  
-          <div className="system-message-container">
-            <label htmlFor="system-message-input">Personality: </label>
-            <select
-              id="system-message-selection"
-              value={systemMessageText}
-              onChange={(e) => setSystemMessageText(e.target.value)}
-            >
-              {personalityOptions.map((option, index) => (
-                <option key={index} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
           </div>
         </>
       )}
