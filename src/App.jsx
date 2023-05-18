@@ -13,7 +13,7 @@ import { db, auth } from './config/firebaseConfig';
 
 function ChatAI() {
   const VITE_MY_OPENAI_API_KEY = import.meta.env.VITE_MY_OPENAI_API_KEY;
-
+  const [loading, setLoading] = useState(true);
   const [typing, setTyping] = useState(false);
   const [typingText, setTypingText] = useState('');
   const [systemMessageText, setSystemMessageText] = useState('');
@@ -29,33 +29,35 @@ function ChatAI() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-  const unsubscribe = auth.onAuthStateChanged(async (user) => {
-    if (user) {
-      // Fetch the user's document from Firestore
-      const userRef = doc(db, 'users', user.uid);
-      const docSnap = await getDoc(userRef);
-
-      if (docSnap.exists()) {
-        // Get the data from the user's document
-        const userData = docSnap.data();
-
-        setUser(user);
-        // Set systemMessageText from the user's document data
-        setSystemMessageText(userData.systemMessageText);
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      
+      if (user) {
+        // Fetch the user's document from Firestore
+        const userRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(userRef);
+        
+        if (docSnap.exists()) {
+          // Get the data from the user's document
+          const userData = docSnap.data();
+          
+          setUser(user);
+          // Set systemMessageText from the user's document data
+          setSystemMessageText(userData.systemMessageText);
+        } else {
+          console.log('No user document found!');
+        }
       } else {
-        console.log('No user document found!');
+        setUser(null);
+        setSystemMessageText("Explain all concepts like I am 10 years old."); // reset systemMessageText to default
       }
-    } else {
-      setUser(null);
-      setSystemMessageText("Explain all concepts like I am 10 years old."); // reset systemMessageText to default
-    }
-  });
+      setLoading(false); // Once the initial authentication state is determined, set loading to false
+    });
 
-  // Cleanup subscription
-  return () => {
-    unsubscribe();
-  };
-}, []);
+    // Cleanup subscription
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   // Save systemMessageText to Firestore when it changes
   useEffect(() => {
@@ -91,7 +93,6 @@ function ChatAI() {
         console.error("Error: conversationId is undefined.");
         return;
       }
-      
       try {
         const user = auth.currentUser;
         if (user) {
@@ -126,7 +127,6 @@ function ChatAI() {
       fetchConversation(conversationId);
     }
   }, [conversationId]);
-  
 
   useEffect(() => {
     const createNewConversation = async () => {
@@ -148,9 +148,8 @@ function ChatAI() {
     if (user && systemMessageText) {
       createNewConversation();
     }
-}, [user, systemMessageText]);
+  }, [user, systemMessageText]);
  
-
   const handleSend = async (message) => {
     const newMessage = {
       message: message,
@@ -194,13 +193,7 @@ function ChatAI() {
 
   return (
     <div className="chat-ai">
-      {user ? (
-        ""
-        ) : (
-          
-          <SignIn handleSignIn={handleSignIn} />
-      )}
-  
+      {!loading && !user &&  <SignIn handleSignIn={handleSignIn} />}
       {user && (
         <>
           <ConversationList
