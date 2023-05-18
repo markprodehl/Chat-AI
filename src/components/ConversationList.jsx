@@ -63,7 +63,6 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
     setIsOpen(false); // close the menu when a conversation is clicked
   };
   
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isOpen && conversationListRef.current && !conversationListRef.current.contains(event.target)) {
@@ -83,42 +82,47 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
         <div className={`${isOpen ? 'hide-icon' : ''}`}>
           <IoIosMenu size={24} />
         </div>
-        {/* <div className={`${isOpen ? 'show-title' : 'hide-title'}`}>Conversation History</div> */}
       </div>
-  
+
       {isOpen && (
         <>
-          {conversations.slice().reverse().map((conversation, index) => {
-            const firstMessage = conversation.messages[0]?.userMessage || '';
-            const previewText = firstMessage.length > 30
-              ? `${firstMessage.slice(0, 20)}...`
-              : firstMessage;
-  
-            return (
+          <details className="dropdown">
+            <summary style={{ listStyle: 'none' }}>Conversation History</summary>
+            {conversations.slice().reverse().map((conversation, index) => {
+              const firstMessage = conversation.messages[0]?.userMessage || '';
+              const previewText = firstMessage.length > 30
+                ? `${firstMessage.slice(0, 20)}...`
+                : firstMessage;
+
+              return (
+                <div
+                  key={index}
+                  className="conversation-item"
+                  onClick={() => handleConversationClick(conversation)}
+                >
+                  {previewText}
+                </div>
+              );
+            })}
+          </details>
+          
+          <details className="dropdown">
+            <summary style={{ listStyle: 'none' }}>Personality Settings</summary>
+            {personalityOptions.map((option, index) => (
               <div
                 key={index}
                 className="conversation-item"
-                onClick={() => handleConversationClick(conversation)}
+                onClick={() => {
+                  setSystemMessageText(option.value);
+                  setIsOpen(false); // Close the menu after selecting an option
+                }}
               >
-                {previewText}
+                {option.label}
               </div>
-            );
-          })}
-          <div className="system-message-container">
-            <label htmlFor="system-message-input">Personality: </label>
-            <select
-              id="system-message-selection"
-              value={systemMessageText}
-              onChange={(e) => setSystemMessageText(e.target.value)}
-            >
-              {personalityOptions.map((option, index) => (
-                <option key={index} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="conversation-item sign-out" onClick={handleSignOut}>
+            ))}
+          </details>
+
+          <div className="dropdown sign-out" onClick={handleSignOut}>
             Sign Out
           </div>
         </>
