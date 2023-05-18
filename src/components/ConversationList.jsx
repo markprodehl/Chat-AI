@@ -135,7 +135,7 @@ ConversationList.propTypes = {
   setConversationId: PropTypes.func.isRequired,
   setMessages: PropTypes.func.isRequired,
   handleSignOut: PropTypes.func.isRequired, // Add handleSignOut prop
-  systemMessageText: PropTypes.func.isRequired,
+  systemMessageText: PropTypes.string.isRequired,
   setSystemMessageText: PropTypes.func.isRequired,
 };
 

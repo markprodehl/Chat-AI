@@ -246,7 +246,8 @@ function ChatAI() {
               <i className="fa fa-paper-plane" aria-hidden="true"></i>
             </button>
           </div>
-
+          
+          {/* To display the personality options select at teh bottom of the view */}
           {/* <div className="system-message-container">
             <label htmlFor="system-message-input">Personality: </label>
             <select
