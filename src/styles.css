@@ -164,6 +164,11 @@
   border-radius: 8px;
 }
 
+.sign-out {
+  font-weight:600;
+  color: #007bff;
+}
+
 .menu-icon {
   position: absolute;
   top: -5px; 
@@ -217,8 +222,8 @@
 
   .conversation-item {
     padding: 5px 10px;
-    color: #00BFFF;
-    font-weight: bold;
+    /* color: #00BFFF; */
+    /* font-weight: bold; */
   }
 
   .menu-icon {

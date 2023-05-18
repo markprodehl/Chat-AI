@@ -16,7 +16,6 @@ function ChatAI() {
   const [typing, setTyping] = useState(false);
   const [typingText, setTypingText] = useState('');
   const [systemMessageText, setSystemMessageText] = useState('');
-  const [initialized, setInitialized] = useState(false);
   const [messages, setMessages] = useState([
     {
       message: 'Hello, I am your AI assistant. Feel free to ask me anything.',
@@ -181,7 +180,9 @@ function ChatAI() {
   };
 
   useEffect(() => {
-    messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    if (messageListRef.current) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    }
   }, [messages]);
 
   const handleButtonClick = () => {
@@ -193,67 +194,78 @@ function ChatAI() {
   return (
     <div className="chat-ai">
       {user ? (
-        <button onClick={handleSignOut}>Sign Out</button>
+        ""
       ) : (
         <button onClick={handleSignIn}>Sign In with Google</button>
       )}
-      <ConversationList setConversationId={setConversationId} setMessages={setMessages} />
-      <div className="chat-container" style={{ overflowY: 'scroll' }} ref={messageListRef}>
-        <div className="message-list-container">
-          <div className="message-list">
-            {messages.map((message, i) => (
-              <div
-                key={i}
-                className={`message ${
-                  message.direction === 'incoming'
-                    ? 'message-incoming'
-                    : 'message-outgoing'
-                }`}
-              >
-                {message.message}
+  
+      {user && (
+        <>
+          <ConversationList
+            setConversationId={setConversationId}
+            setMessages={setMessages}
+            handleSignOut={handleSignOut}
+          />
+          <div className="chat-container" style={{ overflowY: 'scroll' }} ref={messageListRef}>
+            <div className="message-list-container">
+              <div className="message-list">
+                {messages.map((message, i) => (
+                  <div
+                    key={i}
+                    className={`message ${
+                      message.direction === 'incoming'
+                        ? 'message-incoming'
+                        : 'message-outgoing'
+                    }`}
+                  >
+                    {message.message}
+                  </div>
+                ))}
+                {typing && (
+                  <div className="message message-incoming typing-indicator typing-animation">
+                    AI processing: <span>{typingText}</span>
+                  </div>
+                )}
               </div>
-            ))}
-            {typing && (
-              <div className="message message-incoming typing-indicator typing-animation">
-                AI processing: <span>{typingText}</span>
-              </div>
-            )}
+            </div>
           </div>
-        </div>
-      </div>
-      <div className="message-input-container">
-        <input
-          className="message-input"
-          type="text"
-          placeholder="Type message here"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSend(e.target.value);
-              e.target.value = '';
-            }
-          }}
-        />
-        <button
-          className="send-button"
-          onClick={handleButtonClick}
-        >
-          <i className="fa fa-paper-plane" aria-hidden="true"></i>
-        </button>
-      </div>
-      <div className="system-message-container">
-        <label htmlFor="system-message-input">Personality: </label>
-        <select
-          id="system-message-selection"
-          value={systemMessageText}
-          onChange={(e) => setSystemMessageText(e.target.value)}
-        >
-          {personalityOptions.map((option, index) => (
-            <option key={index} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
+
+          <div className="message-input-container">
+            <input
+              className="message-input"
+              type="text"
+              placeholder="Type message here"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSend(e.target.value);
+                  e.target.value = '';
+                }
+              }}
+            />
+            <button
+              className="send-button"
+              onClick={handleButtonClick}
+            >
+              <i className="fa fa-paper-plane" aria-hidden="true"></i>
+            </button>
+          </div>
+  
+          <div className="system-message-container">
+            <label htmlFor="system-message-input">Personality: </label>
+            <select
+              id="system-message-selection"
+              value={systemMessageText}
+              onChange={(e) => setSystemMessageText(e.target.value)}
+            >
+              {personalityOptions.map((option, index) => (
+                <option key={index} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </>
+      )}
     </div>
   );
   
