@@ -178,6 +178,11 @@
   color: rgb(234, 232, 232);
 }
 
+.chat-ai-header {
+  text-align: center;
+  color: #606060;
+}
+
 .google-btn {
   background-color: #242424;
   border: none;
