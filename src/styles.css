@@ -164,6 +164,11 @@
   border-radius: 8px;
 }
 
+.sign-out {
+  font-weight:600;
+  color: #007bff;
+}
+
 .menu-icon {
   position: absolute;
   top: -5px; 
@@ -171,6 +176,20 @@
   padding-top: 10px;
   cursor: pointer;
   color: rgb(234, 232, 232);
+}
+
+.chat-ai-header {
+  text-align: center;
+  color: #606060;
+}
+
+.google-btn {
+  background-color: #242424;
+  border: none;
+}
+
+.google-icon:hover {
+ opacity: 0.8;
 }
 
 /* Media queries */
@@ -217,8 +236,8 @@
 
   .conversation-item {
     padding: 5px 10px;
-    color: #00BFFF;
-    font-weight: bold;
+    /* color: #00BFFF; */
+    /* font-weight: bold; */
   }
 
   .menu-icon {

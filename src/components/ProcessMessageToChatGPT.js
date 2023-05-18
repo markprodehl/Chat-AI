@@ -1,6 +1,5 @@
 import { updateDoc, arrayUnion, doc, serverTimestamp } from 'firebase/firestore';
-import db from '../config/firebaseConfig';
-
+import { db, auth } from '/src/config/firebaseConfig.js';
 
 const processMessageToChatGPT = async (
   chatMessages,
@@ -24,6 +23,11 @@ const processMessageToChatGPT = async (
     }
     return { role: role, content: messageObject.message };
   });
+
+  if(!systemMessageText) {
+    console.error('systemMessage undefined')
+    return
+  }
 
   // role: "user" -> message from the user
   // role "assistant" -> message from ChatGPT
@@ -50,9 +54,15 @@ const processMessageToChatGPT = async (
     body: JSON.stringify(apiRequestBody),
   })
   // Now we need to grab the data being returned from OpenAI
-  .then((data) => {
-    // Return the data as a JSON object
-    return data.json();
+  .then((response) => {
+    if (!response.ok) {
+      // The request failed, let's get more information
+      return response.json().then((errorInfo) => {
+        console.error('Error info:', errorInfo);
+        throw new Error('Network response was not ok');
+      });
+    }
+    return response.json();
   })
 
   // USe this if you dont want the typing effect
@@ -106,17 +116,31 @@ const processMessageToChatGPT = async (
       ]);
 
       // Save the conversation history to Firestore
-      const conversationRef = doc(db, 'conversations', conversationId);
-      await updateDoc(conversationRef, {
-        messages: arrayUnion({
-          userMessage: chatMessages[chatMessages.length - 1].message,
-          aiResponse: responseText,
-        }),
-        lastUpdated: serverTimestamp(),
-      });
+      const currentUser = auth.currentUser; // Initialize currentUser at the beginning
+      if (currentUser) {
+        const userId = currentUser.uid;
+        const userRef = doc(db, 'users', userId); // Get the document reference to the current user
+        const conversationRef = doc(userRef, 'conversations', conversationId); // Get the reference to the conversation document under the current user
+        const userMessage = chatMessages[chatMessages.length - 1]?.message || '';
+        const aiResponse = responseText || '';
+
+        await updateDoc(conversationRef, {
+          userId: userId,
+          messages: arrayUnion({
+            userMessage: userMessage,
+            aiResponse: aiResponse,
+          }),
+          lastUpdated: serverTimestamp(),
+        });
+      } else {
+        console.error('Error: User not authenticated.');
+      }
     });
-  });
-};
+  })
+  .catch((error) => {
+    console.error('Network Error:', error)
+  })
+ };
 
 export default processMessageToChatGPT;
   
