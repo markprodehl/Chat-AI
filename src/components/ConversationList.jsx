@@ -111,13 +111,14 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
             {personalityOptions.map((option, index) => (
               <div
                 key={index}
-                className="conversation-item"
+                className={`conversation-item ${systemMessageText === option.value ? 'selected-option' : ''}`}
                 onClick={() => {
                   setSystemMessageText(option.value);
                   setIsOpen(false); // Close the menu after selecting an option
                 }}
               >
                 {option.label}
+                {systemMessageText === option.value ? ' *' : ''}
               </div>
             ))}
           </details>

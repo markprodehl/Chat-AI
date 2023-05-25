@@ -172,6 +172,10 @@
   border-radius: 8px;
 }
 
+.selected-option {
+  color: #007bff;
+}
+
 .sign-out {
   font-weight:600;
   color: #007bff;
