@@ -20,7 +20,8 @@ ChatAI is an application developed using React and Vite. It uses Firebase Firest
 
 ## Installation
 
-Make sure you have `Node.js` and `npm` installed.
+- Make sure you have `Node.js` and `npm` installed.
+- You have set up a Firebase project with Firestore and Firebase Authentication enabled.
 
 1. Clone this repository:
 
