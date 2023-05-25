@@ -23,7 +23,8 @@ Link to the deployed application - https://chat-ai-c95f1.web.app/
 ## Installation
 
 - Make sure you have `Node.js` and `npm` installed.
-- You have set up a Firebase project with Firestore and Firebase Authentication enabled.
+- Set up Google Firebase - Refer to the Firebase Quickstart Guide https://firebase.google.com/docs/hosting/quickstart
+- Have Firebase Authentication enabled.
 
 1. Clone this repository:
 
