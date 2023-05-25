@@ -2,6 +2,8 @@
 
 ChatAI is an application developed using React and Vite. It uses Firebase Firestore for data storage and Google Authentication for user identification. This application is hosted on Google hosting. The application interacts with OpenAI's GPT-3 model for creating conversational agents.
 
+Link to the deployed application - https://chat-ai-c95f1.web.app/
+
 ## Features
 
 - Google Authentication
