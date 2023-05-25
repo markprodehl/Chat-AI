@@ -200,6 +200,8 @@ function ChatAI() {
             setConversationId={setConversationId}
             setMessages={setMessages}
             handleSignOut={handleSignOut}
+            systemMessageText={systemMessageText}
+            setSystemMessageText={setSystemMessageText}
           />
           <div className="chat-container" style={{ overflowY: 'scroll' }} ref={messageListRef}>
             <div className="message-list-container">
@@ -244,8 +246,9 @@ function ChatAI() {
               <i className="fa fa-paper-plane" aria-hidden="true"></i>
             </button>
           </div>
-  
-          <div className="system-message-container">
+          
+          {/* To display the personality options select at teh bottom of the view */}
+          {/* <div className="system-message-container">
             <label htmlFor="system-message-input">Personality: </label>
             <select
               id="system-message-selection"
@@ -258,7 +261,7 @@ function ChatAI() {
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
         </>
       )}
     </div>

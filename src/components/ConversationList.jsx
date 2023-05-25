@@ -3,7 +3,8 @@ import { collection, getDocs, query, orderBy, doc } from 'firebase/firestore';
 import { db, auth } from '/src/config/firebaseConfig.js';
 import PropTypes from 'prop-types';
 import { IoIosMenu } from 'react-icons/io';
-function ConversationList({ setConversationId, setMessages, handleSignOut }) {
+import personalityOptions from './PersonalityOptions';
+function ConversationList({ setConversationId, setMessages, handleSignOut, systemMessageText, setSystemMessageText}) {
   const [conversations, setConversations] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const conversationListRef = useRef(null); 
@@ -62,7 +63,6 @@ function ConversationList({ setConversationId, setMessages, handleSignOut }) {
     setIsOpen(false); // close the menu when a conversation is clicked
   };
   
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isOpen && conversationListRef.current && !conversationListRef.current.contains(event.target)) {
@@ -82,28 +82,48 @@ function ConversationList({ setConversationId, setMessages, handleSignOut }) {
         <div className={`${isOpen ? 'hide-icon' : ''}`}>
           <IoIosMenu size={24} />
         </div>
-        {/* <div className={`${isOpen ? 'show-title' : 'hide-title'}`}>Conversation History</div> */}
       </div>
-  
+
       {isOpen && (
         <>
-          {conversations.slice().reverse().map((conversation, index) => {
-            const firstMessage = conversation.messages[0]?.userMessage || '';
-            const previewText = firstMessage.length > 30
-              ? `${firstMessage.slice(0, 20)}...`
-              : firstMessage;
-  
-            return (
+          <details className="dropdown">
+            <summary style={{ listStyle: 'none' }}>Conversation History</summary>
+            {conversations.slice().reverse().map((conversation, index) => {
+              const firstMessage = conversation.messages[0]?.userMessage || '';
+              const previewText = firstMessage.length > 30
+                ? `${firstMessage.slice(0, 20)}...`
+                : firstMessage;
+
+              return (
+                <div
+                  key={index}
+                  className="conversation-item"
+                  onClick={() => handleConversationClick(conversation)}
+                >
+                  {previewText}
+                </div>
+              );
+            })}
+          </details>
+          
+          <details className="dropdown">
+            <summary style={{ listStyle: 'none' }}>Personality Settings</summary>
+            {personalityOptions.map((option, index) => (
               <div
                 key={index}
-                className="conversation-item"
-                onClick={() => handleConversationClick(conversation)}
+                className={`conversation-item ${systemMessageText === option.value ? 'selected-option' : ''}`}
+                onClick={() => {
+                  setSystemMessageText(option.value);
+                  setIsOpen(false); // Close the menu after selecting an option
+                }}
               >
-                {previewText}
+                {option.label}
+                {systemMessageText === option.value ? ' *' : ''}
               </div>
-            );
-          })}
-          <div className="conversation-item sign-out" onClick={handleSignOut}>
+            ))}
+          </details>
+
+          <div className="dropdown sign-out" onClick={handleSignOut}>
             Sign Out
           </div>
         </>
@@ -116,6 +136,8 @@ ConversationList.propTypes = {
   setConversationId: PropTypes.func.isRequired,
   setMessages: PropTypes.func.isRequired,
   handleSignOut: PropTypes.func.isRequired, // Add handleSignOut prop
+  systemMessageText: PropTypes.string.isRequired,
+  setSystemMessageText: PropTypes.func.isRequired,
 };
 
 export default ConversationList;

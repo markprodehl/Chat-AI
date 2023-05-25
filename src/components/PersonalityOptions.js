@@ -1,5 +1,5 @@
 const personalityOptions = [
-  { label: '10 Year Old', value: 'Explain all concepts like I am 10 years old.' },
+  { label: 'Default', value: 'Explain all concepts like a normal person.' },
   { label: 'Comedian', value: 'Explain all concepts like I am a comedian.' },
   { label: 'Pirate', value: 'Explain all concepts like I am a pirate.' },
   { label: 'Empathetic', value: 'Explain all concepts like I am empathetic.' },

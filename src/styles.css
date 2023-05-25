@@ -154,14 +154,26 @@
   color: white; 
 }
 
+.dropdown {
+  padding: 5px
+}
+
+.dropdown:hover {
+  font-weight: 700
+}
+
 .conversation-item {
   box-shadow: 0px 4px 12px rgba(21, 20, 20, 0.5);
-  padding: 7px;
+  padding: 7px 15px;
 }
 
 .conversation-item:hover {
   background-color: rgb(52, 48, 48);
   border-radius: 8px;
+}
+
+.selected-option {
+  color: #007bff;
 }
 
 .sign-out {
@@ -177,6 +189,8 @@
   cursor: pointer;
   color: rgb(234, 232, 232);
 }
+
+
 
 .chat-ai-header {
   text-align: center;
