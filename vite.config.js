@@ -7,6 +7,9 @@ export default defineConfig({
   build: {
     css: {
       include: ['./src/App.css']
+    },
+    optimizeDeps: {
+      include: ['react-syntax-highlighter']
     }
   }
 })
