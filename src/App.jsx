@@ -213,39 +213,47 @@ function ChatAI() {
                   // Split the message into different parts based on '```' delimiter
                   const messageParts = message.message.split('```');
 
-                  return messageParts.map((part, j) => {
-                    // Check if the part is a code snippet or regular text
-                    const isCodeSnippet = j % 2 === 1;
-
-                    if (isCodeSnippet) {
-                      // Split the code snippet into language and code
-                      const [language, ...codeParts] = part.split('\n');
-                      const code = codeParts.join('\n');
-
-                      // Render the part as a code snippet using SyntaxHighlighter
-                      return (
-                        <SyntaxHighlighter language={language} style={solarizedlight} key={`${i}-${j}`}>
-                          {code}
-                        </SyntaxHighlighter>
-                      );
-                    } else {
-                      // Render the part as plain text
-                      return (
-                        <div
-                          key={`${i}-${j}`}
-                          className={`message ${
-                            message.direction === 'incoming'
-                              ? 'message-incoming'
-                              : 'message-outgoing'
-                          }`}
-                        >
-                          {/* {escapeHtml(part)} */}
-                          {part}
-                        </div>
-                      );
-                    }
-                  });
+                  return (
+                    <div
+                      key={i}
+                      className={`message ${
+                        message.direction === 'incoming' ? 'message-incoming' : 'message-outgoing'
+                      }`}
+                    >
+                      {messageParts.map((messagePart, j) => {
+                        const isCodeSnippet = j % 2 === 1;
+                        if (isCodeSnippet) {
+                          const codeLanguage = messagePart.split('\n')[0];
+                          const codeSnippet = messagePart.replace(codeLanguage + '\n', '');
+                  
+                          return (
+                            <SyntaxHighlighter language={codeLanguage} style={solarizedlight} key={`${i}-${j}`}>
+                              {codeSnippet}
+                            </SyntaxHighlighter>
+                          );
+                        } else {
+                          const inlineCodeParts = messagePart.split('`');
+                          return inlineCodeParts.map((inlinePart, k) => {
+                            const isInlineCode = k % 2 === 1;
+                            if (isInlineCode) {
+                              return <span className="inline-code" key={`${i}-${j}-${k}`}>{inlinePart}</span>
+                            } else {
+                              return <span key={`${i}-${j}-${k}`}>{inlinePart}</span>
+                            }
+                          });
+                        }
+                      })}
+                    </div>
+                  );
+                  
                 })}
+
+
+
+
+
+
+
 
                 {typing && (
                   <div className="message message-incoming typing-indicator typing-animation">
