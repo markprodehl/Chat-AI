@@ -88,7 +88,7 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
         <>
           <details className="dropdown">
             <summary style={{ listStyle: 'none' }}>Conversation History</summary>
-            {conversations.slice().reverse().map((conversation, index) => {
+            {conversations.slice().map((conversation, index) => {
               const firstMessage = conversation.messages[0]?.userMessage || '';
               const previewText = firstMessage.length > 30
                 ? `${firstMessage.slice(0, 20)}...`

@@ -212,7 +212,6 @@ function ChatAI() {
                 {messages.map((message, i) => {
                   // Split the message into different parts based on '```' delimiter
                   const messageParts = message.message.split('```');
-
                   return (
                     <div
                       key={i}
@@ -245,16 +244,7 @@ function ChatAI() {
                       })}
                     </div>
                   );
-                  
                 })}
-
-
-
-
-
-
-
-
                 {typing && (
                   <div className="message message-incoming typing-indicator typing-animation">
                     AI processing: <span>{typingText}</span>
@@ -303,7 +293,6 @@ function ChatAI() {
       )}
     </div>
   );
-  
 }
 
 export default ChatAI
