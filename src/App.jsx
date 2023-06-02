@@ -2,7 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import './styles.css';
 import 'font-awesome/css/font-awesome.min.css';
 
-import personalityOptions from './components/PersonalityOptions';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism'; // choose the style you prefer
+import 'react-syntax-highlighter/dist/esm/styles/prism/solarizedlight';
+
 import processMessageToChatGPT from './components/ProcessMessageToChatGPT';
 import ConversationList from './components/ConversationList';
 import { signIn, signOut } from './components/authentication';
@@ -202,22 +205,48 @@ function ChatAI() {
             handleSignOut={handleSignOut}
             systemMessageText={systemMessageText}
             setSystemMessageText={setSystemMessageText}
-          />
+            />
           <div className="chat-container" style={{ overflowY: 'scroll' }} ref={messageListRef}>
             <div className="message-list-container">
               <div className="message-list">
-                {messages.map((message, i) => (
-                  <div
-                    key={i}
-                    className={`message ${
-                      message.direction === 'incoming'
-                        ? 'message-incoming'
-                        : 'message-outgoing'
-                    }`}
-                  >
-                    {message.message}
-                  </div>
-                ))}
+                {messages.map((message, i) => {
+                  // Split the message into different parts based on '```' delimiter
+                  const messageParts = message.message.split('```');
+
+                  return messageParts.map((part, j) => {
+                    // Check if the part is a code snippet or regular text
+                    const isCodeSnippet = j % 2 === 1;
+
+                    if (isCodeSnippet) {
+                      // Split the code snippet into language and code
+                      const [language, ...codeParts] = part.split('\n');
+                      const code = codeParts.join('\n');
+
+                      // Render the part as a code snippet using SyntaxHighlighter
+                      return (
+                        <SyntaxHighlighter language={language} style={solarizedlight} key={`${i}-${j}`}>
+                          {code}
+                        </SyntaxHighlighter>
+                      );
+                    } else {
+                      // Render the part as plain text
+                      return (
+                        <div
+                          key={`${i}-${j}`}
+                          className={`message ${
+                            message.direction === 'incoming'
+                              ? 'message-incoming'
+                              : 'message-outgoing'
+                          }`}
+                        >
+                          {/* {escapeHtml(part)} */}
+                          {part}
+                        </div>
+                      );
+                    }
+                  });
+                })}
+
                 {typing && (
                   <div className="message message-incoming typing-indicator typing-animation">
                     AI processing: <span>{typingText}</span>
