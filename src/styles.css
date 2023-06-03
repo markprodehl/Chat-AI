@@ -119,6 +119,13 @@
   background-color: #0069d9;
 }
 
+.inline-code {
+  background-color: #695858;
+  font-family: monospace;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
 @keyframes typing {
   0% {
     opacity: 0.5;
