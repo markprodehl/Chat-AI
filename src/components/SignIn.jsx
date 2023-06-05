@@ -6,10 +6,28 @@ import '../styles.css';
 const SignIn = ({ handleSignIn, handleSignInWithEmail, handleSignUpWithEmail }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+
+  const handleSignInClick = async () => {
+    try {
+      await handleSignInWithEmail(email, password);
+    } catch (error) {
+      setError(error.message);
+    }
+  }
+
+  const handleSignUpClick = async () => {
+    try {
+      await handleSignUpWithEmail(email, password);
+    } catch (error) {
+      setError(error.message);
+    }
+  }
 
   return (
     <div className="signin-container">
       <h1 className="chat-ai-header">Chat AI</h1>
+      {error && <p className="error-message">{error}</p>}
       <div className="signin-form">
         <input 
           type="email" 
@@ -26,10 +44,10 @@ const SignIn = ({ handleSignIn, handleSignInWithEmail, handleSignUpWithEmail }) 
           className="signin-input"
         />
         <div className="auth-buttons">
-          <button onClick={() => handleSignInWithEmail(email, password)} className="signin-btn auth-btn">
+          <button onClick={handleSignInClick} className="signin-btn auth-btn">
             Sign In
           </button>
-          <button onClick={() => handleSignUpWithEmail(email, password)} className="signup-btn auth-btn">
+          <button onClick={handleSignUpClick} className="signup-btn auth-btn">
             Sign Up
           </button>
         </div>
@@ -48,4 +66,3 @@ SignIn.propTypes = {
 };
 
 export default SignIn;
-

@@ -247,6 +247,13 @@
   border-radius: 14px;
 }
 
+.error-message {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 12px;
+}
+
 .menu-icon {
   position: absolute;
   top: -5px; 
