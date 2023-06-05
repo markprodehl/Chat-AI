@@ -9,7 +9,7 @@ import 'react-syntax-highlighter/dist/esm/styles/prism/solarizedlight';
 
 import processMessageToChatGPT from './components/ProcessMessageToChatGPT';
 import ConversationList from './components/ConversationList';
-import { signIn, signOut } from './components/authentication';
+import { signIn, signInWithEmail, signUpWithEmail, signOut } from './components/authentication';
 import SignIn from './components/SignIn';
 
 import { collection, addDoc, serverTimestamp, doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -85,6 +85,16 @@ function ChatAI() {
     const user = await signIn();
     setUser(user);
   };
+
+  const handleSignInWithEmail = async (email, password) => {
+    const user = await signInWithEmail(email, password);
+    setUser(user);
+  };
+
+  const handleSignUpWithEmail = async (email, password) => {
+    const user = await signUpWithEmail(email, password);
+    setUser(user);
+  };    
 
   const handleSignOut = async () => {
     await signOut();
@@ -256,7 +266,7 @@ function ChatAI() {
   
   return (
     <div className="chat-ai">
-      {!loading && !user &&  <SignIn handleSignIn={handleSignIn} />}
+      {!loading && !user &&  <SignIn handleSignIn={handleSignIn} handleSignInWithEmail={handleSignInWithEmail} handleSignUpWithEmail={handleSignUpWithEmail} />}
       {user && (
         <>
           <ConversationList

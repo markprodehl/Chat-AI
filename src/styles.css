@@ -55,7 +55,7 @@
   border-radius: 15px;
   padding: 10px 15px;
   margin-bottom: 10px;
-  max-width: 80%;
+  max-width: 93%; 
 }
 
 .message-outgoing {
@@ -183,11 +183,70 @@
   color: #007bff;
 }
 
+.highlighter {
+  border: 1px rgb(20, 20, 20) !important;
+  box-shadow: none !important;
+}
+
 .sign-out {
   font-weight:600;
   color: #007bff;
 }
 
+.signin-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.signin-form {
+  display: flex;
+  flex-direction: column;
+  /* margin: 1em; */
+  width: 300px;
+}
+
+.signin-input {
+  background-color: #333333;
+  border-radius: 8px;
+  padding: 10px;
+  color: #ffffff;
+  margin-bottom: 10px;
+  border: none;
+}
+
+.auth-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.auth-btn {
+  flex: 1;
+  margin: 5px;
+}
+
+.signin-btn, .signup-btn, .google-btn {
+  border-radius: 8px;
+  margin-top: 10px;
+  color: #ffffff;
+  background-color: #007bff;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+}
+
+.signin-btn:hover, .signup-btn:hover {
+  background-color: #0069d9;
+}
+
+.google-icon {
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 14px;
+}
 .menu-icon {
   position: absolute;
   top: -5px; 
@@ -197,8 +256,6 @@
   color: rgb(234, 232, 232);
 }
 
-
-
 .chat-ai-header {
   text-align: center;
   color: #606060;
@@ -206,6 +263,7 @@
 
 .google-btn {
   background-color: #242424;
+  padding: 0px;
   border: none;
 }
 
