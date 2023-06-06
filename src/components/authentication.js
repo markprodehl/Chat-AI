@@ -52,7 +52,13 @@ const signUpWithEmail = async (email, password) => {
     return user; 
   } catch (error) {
     console.error(error);
-    throw error; // Forward the error to caller
+    if (error.code === 'auth/email-already-in-use') {
+      throw new Error('An account exists with this email. Please sign in.');
+    } else if (error.code === 'auth/weak-password') {
+      throw new Error('Password should be at least 6 characters');
+    } else {
+      throw new Error('Error signing up.');
+    }
   }
 };
 
@@ -82,7 +88,13 @@ const signInWithEmail = async (email, password) => {
     return user;
   } catch (error) {
     console.error('Error signing in:', error);
-    return null;
+    if (error.code === 'auth/wrong-password') {
+      throw new Error('Incorrect password. Please try again.');
+    } else if (error.code === 'auth/user-not-found') {
+      throw new Error('No account exists with this email. Please sign up.');
+    } else {
+      throw new Error('Error signing in.');
+    }
   }
 };
 
