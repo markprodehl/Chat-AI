@@ -53,7 +53,7 @@ const signUpWithEmail = async (email, password) => {
   } catch (error) {
     console.error(error);
     if (error.code === 'auth/email-already-in-use') {
-      throw new Error('An account already exists with this email. Please sign in.');
+      throw new Error('An account exists with this email. Please sign in.');
     } else if (error.code === 'auth/weak-password') {
       throw new Error('Password should be at least 6 characters');
     } else {
