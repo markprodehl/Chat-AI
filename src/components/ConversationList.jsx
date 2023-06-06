@@ -6,6 +6,7 @@ import { IoIosMenu } from 'react-icons/io';
 import personalityOptions from './PersonalityOptions';
 function ConversationList({ setConversationId, setMessages, handleSignOut, systemMessageText, setSystemMessageText}) {
   const [conversations, setConversations] = useState([]);
+  const [userEmail, setUserEmail] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const conversationListRef = useRef(null); 
 
@@ -14,6 +15,7 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
       const user = auth.currentUser;
       if (user) {
         const userId = user.uid;
+        setUserEmail(user.email);
         const userRef = doc(db, 'users', userId);
         const q = query(
           collection(userRef, 'conversations'),
@@ -28,7 +30,7 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
           });
         });
         setConversations(conversationsArray);
-      }
+      } // <-- Clear user email when user logs out
     };
   
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -124,7 +126,7 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
           </details>
 
           <div className="dropdown sign-out" onClick={handleSignOut}>
-            Sign Out
+            Sign Out  {userEmail}
           </div>
         </>
       )}
