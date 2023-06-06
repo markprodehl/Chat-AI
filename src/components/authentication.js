@@ -92,6 +92,8 @@ const signInWithEmail = async (email, password) => {
       throw new Error('Incorrect password. Please try again.');
     } else if (error.code === 'auth/user-not-found') {
       throw new Error('No account exists with this email. Please sign up.');
+    } else if (error.code === 'auth/missing-password') {
+      throw new Error('You need a password.');
     } else {
       throw new Error('Error signing in.');
     }
