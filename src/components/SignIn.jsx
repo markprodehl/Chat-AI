@@ -32,6 +32,17 @@ const SignIn = ({ handleSignIn, handleSignInWithEmail, handleSignUpWithEmail }) 
     }
   }
 
+  const handleGoogleSignIn = async () => {
+    try {
+      setLoading(true);
+      await handleSignIn(); // Perform the Google sign-in logic
+      setLoading(false);
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="signin-container">
       <h1 className="chat-ai-header">Chat AI</h1>
@@ -69,7 +80,7 @@ const SignIn = ({ handleSignIn, handleSignInWithEmail, handleSignUpWithEmail }) 
               </button>
             </div>
           </div>
-          <button className="google-btn" onClick={handleSignIn}>
+          <button className="google-btn" onClick={handleGoogleSignIn}>
             <img className="google-icon" src={googleIcon} alt="Google sign-in" />
           </button>
         </>
