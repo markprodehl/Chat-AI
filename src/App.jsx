@@ -205,64 +205,84 @@ function ChatAI() {
     inputElement.value = '';
   };
 
-  function formatLists(text) {
-    // Split the input text into individual lines.
-    const lines = text.split('\n');
+  const formatMessageContent = (content, isOutgoing) => {
+    const lines = content.split('\n');
   
-    // Initialize an empty list to hold list items.
-    let list = [];
-  
-    // Initialize an empty list to hold the formatted lines of text.
     let formattedLines = [];
+    let listType = null;
+    let listItems = [];
   
-    // This function processes the list items collected so far and appends the
-    // corresponding HTML list to the formatted lines of text.
     const processList = () => {
-      if (list.length > 0) {
-        // Determine whether to use an unordered list (<ul>) or an ordered list (<ol>)
-        // based on whether the first list item starts with "* ", "- " (asterisk or dash followed by space).
-        let listType = (list[0].startsWith('* ') || list[0].startsWith('- ')) ? 'ul' : 'ol';
-  
-        // Create the HTML list and append it to the formatted lines of text.
-        formattedLines.push(
-          React.createElement(
-            listType,
-            null,
-            list.map((item, index) => {
-              // Remove the list marker ("* ", "- " or "N. ") from the start of the item.
-              const content = item.startsWith('* ') ? item.slice(2) : item.startsWith('- ') ? item.slice(2) : item.slice(item.indexOf('.') + 2);
-              // Return an HTML list item (<li>).
-              return <li key={index}>{content}</li>;
-            })
-          )
-        );
-        
-        // Clear the list items.
-        list = [];
+      if (listItems.length > 0) {
+        if (listType === 'bullet') {
+          return <ul key={formattedLines.length}>{listItems.map((item, index) => <li key={index}>{item}</li>)}</ul>;
+        } else if (listType === 'numbered') {
+          return <ol key={formattedLines.length}>{listItems.map((item, index) => <li key={index}>{item}</li>)}</ol>;
+        }
       }
+      return null;
     };
   
-    // Iterate over the lines of text.
-    for (let i = 0; i < lines.length; i++) {
-      let line = lines[i];
+    const formatInlineCode = (line) => {
+      const parts = line.split('`');
+      return parts.map((part, index) => {
+        if (index % 2 === 1) {
+          return <code className="inline-code"key={index}>{part}</code>;
+        }
+        return part;
+      });
+    };
   
-      // If the line is a list item (starts with "* ", "- " or "N. "), add it to the list of items.
-      // Otherwise, process the list items collected so far and add the line to the formatted lines of text.
-      if (line.startsWith('* ') || line.startsWith('- ') || line.match(/^\d+\./)) {
-        list.push(line);
+    lines.forEach((line) => {
+      const trimmedLine = line.trim();
+  
+      if (trimmedLine.startsWith('- ')) {
+        if (listType === 'numbered') {
+          formattedLines.push(processList());
+          listItems = [];
+          listType = null;
+        }
+  
+        if (!listType || listType === 'bullet') {
+          listType = 'bullet';
+          listItems.push(trimmedLine.slice(2));
+        } else {
+          formattedLines.push(line);
+        }
+      } else if (trimmedLine.match(/^\d+\./)) {
+        if (listType === 'bullet') {
+          formattedLines.push(processList());
+          listItems = [];
+          listType = null;
+        }
+  
+        if (!listType || listType === 'numbered') {
+          listType = 'numbered';
+          listItems.push(trimmedLine.slice(trimmedLine.indexOf('.') + 2));
+        } else {
+          formattedLines.push(line);
+        }
       } else {
-        processList();
-        formattedLines.push(line);
+        const formattedLine = formatInlineCode(line);
+        formattedLines.push(
+          <p className={`paragraph ${isOutgoing ? 'message-outgoing-bubble' : ''}`} key={formattedLines.length}>
+            {formattedLine}
+          </p>
+        );
+        if (listType) {
+          formattedLines.push(processList());
+          listItems = [];
+          listType = null;
+        }
       }
+    });
+  
+    if (listType) {
+      formattedLines.push(processList());
     }
   
-    // Process any remaining list items.
-    processList(); 
-    
-    // Return the formatted lines of text.
-    return formattedLines;
-  }
-
+    return formattedLines.map((line, index) => <div key={index}>{line}</div>);
+  };
   
   return (
     <div className="chat-ai">
@@ -280,7 +300,6 @@ function ChatAI() {
             <div className="message-list-container">
               <div className="message-list">
                 {messages.map((message, i) => {
-                  // Split the message into different parts based on '```' delimiter
                   const messageParts = message.message.split('```');
                   return (
                     <div
@@ -294,28 +313,23 @@ function ChatAI() {
                         if (isCodeSnippet) {
                           const codeLanguage = messagePart.split('\n')[0];
                           const codeSnippet = messagePart.replace(codeLanguage + '\n', '');
-                  
+
                           return (
-                            <SyntaxHighlighter className="highlighter"language={codeLanguage || 'javascript'} style={twilight} key={`${i}-${j}`}>
+                            <SyntaxHighlighter
+                              className="highlighter"
+                              language={codeLanguage || 'javascript'}
+                              style={twilight}
+                              key={`${i}-${j}`}
+                            >
                               {codeSnippet}
                             </SyntaxHighlighter>
                           );
                         } else {
-                          const inlineCodeParts = messagePart.split('`');
-                          return inlineCodeParts.map((inlinePart, k) => {
-                            const isInlineCode = k % 2 === 1;
-                            if (isInlineCode) {
-                              return <span className="inline-code" key={`${i}-${j}-${k}`}>{inlinePart}</span>
-                            } else {
-                              return formatLists(inlinePart).map((formattedLine, l) => (
-                                <span key={`${i}-${j}-${k}-${l}`}>{formattedLine}</span>
-                              ));
-                            }
-                          });
+                          return formatMessageContent(messagePart, message.direction === 'outgoing');
                         }
                       })}
                     </div>
-                  );                  
+                  );
                 })}
                 {typing && (
                   <div className="message message-incoming typing-indicator typing-animation">
@@ -346,7 +360,7 @@ function ChatAI() {
             </button>
           </div>
           
-          {/* To display the personality options select at teh bottom of the view */}
+          {/* To display the personality options select at the bottom of the view */}
           {/* <div className="system-message-container">
             <label htmlFor="system-message-input">Personality: </label>
             <select
