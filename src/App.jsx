@@ -215,19 +215,20 @@ function ChatAI() {
     const processList = () => {
       if (listItems.length > 0) {
         if (listType === 'bullet') {
-          return <ul key={formattedLines.length}>{listItems.map((item, index) => <li key={index}>{item}</li>)}</ul>;
+          formattedLines.push(<ul key={formattedLines.length}>{listItems.map((item, index) => <li key={index}>{item}</li>)}</ul>);
         } else if (listType === 'numbered') {
-          return <ol key={formattedLines.length}>{listItems.map((item, index) => <li key={index}>{item}</li>)}</ol>;
+          formattedLines.push(<ol key={formattedLines.length}>{listItems.map((item, index) => <li key={index}>{item}</li>)}</ol>);
         }
+        listItems = [];
       }
-      return null;
+      listType = null;
     };
   
     const formatInlineCode = (line) => {
       const parts = line.split('`');
       return parts.map((part, index) => {
         if (index % 2 === 1) {
-          return <code className="inline-code"key={index}>{part}</code>;
+          return <code className="inline-code" key={index}>{part}</code>;
         }
         return part;
       });
@@ -237,52 +238,31 @@ function ChatAI() {
       const trimmedLine = line.trim();
   
       if (trimmedLine.startsWith('- ')) {
-        if (listType === 'numbered') {
-          formattedLines.push(processList());
-          listItems = [];
-          listType = null;
-        }
-  
-        if (!listType || listType === 'bullet') {
-          listType = 'bullet';
-          listItems.push(trimmedLine.slice(2));
-        } else {
-          formattedLines.push(line);
-        }
+        listType = 'bullet';
+        listItems.push(trimmedLine.slice(2));
       } else if (trimmedLine.match(/^\d+\./)) {
-        if (listType === 'bullet') {
-          formattedLines.push(processList());
-          listItems = [];
-          listType = null;
+        listType = 'numbered';
+        listItems.push(trimmedLine.slice(trimmedLine.indexOf('.') + 2));
+      } else if (trimmedLine !== '') {
+        if (listType) {
+          processList();
         }
-  
-        if (!listType || listType === 'numbered') {
-          listType = 'numbered';
-          listItems.push(trimmedLine.slice(trimmedLine.indexOf('.') + 2));
-        } else {
-          formattedLines.push(line);
-        }
-      } else {
-        const formattedLine = formatInlineCode(line);
+        const formattedLine = formatInlineCode(trimmedLine);
         formattedLines.push(
           <p className={`paragraph ${isOutgoing ? 'message-outgoing-bubble' : ''}`} key={formattedLines.length}>
             {formattedLine}
           </p>
         );
-        if (listType) {
-          formattedLines.push(processList());
-          listItems = [];
-          listType = null;
-        }
       }
     });
   
     if (listType) {
-      formattedLines.push(processList());
+      processList();
     }
   
     return formattedLines.map((line, index) => <div key={index}>{line}</div>);
   };
+
   
   return (
     <div className="chat-ai">
