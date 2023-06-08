@@ -96,7 +96,6 @@ p {
 
 .message-input {
   border: none;
-  border-radius: 8px 0 0 8px;
   padding: 10px;
   font-size: 16px;
   width: 50vw;
@@ -117,18 +116,31 @@ p {
   font-weight: bold;
 }
 
-.send-button {
-  background-color: #007bff;
+.input-buttons {
   border: none;
   color: white;
-  padding: 10px 12px;
   font-size: 16px;
   cursor: pointer;
   border-radius: 0 4px 4px 0;
 }
 
+.send-button {
+  background-color: #007bff;
+  padding: 10px 12px;
+  border-radius: 0 4px 4px 0;
+}
+
+.new-conversation-button {
+  background-color: #228B22;
+  border-radius: 4px 0 0 4px;
+} 
+
 .send-button:hover {
   background-color: #0069d9;
+}
+
+.new-conversation-button:hover {
+  background-color: #1c741c;
 }
 
 .inline-code {

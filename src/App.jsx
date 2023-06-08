@@ -206,6 +206,33 @@ function ChatAI() {
     inputElement.value = '';
   };
 
+  // This function will handle starting a new conversation
+  const handleNewConversation = async () => {
+    // Reset the messages state
+    setMessages([
+      {
+        message: 'Hello, I am your AI assistant. Feel free to ask me anything.',
+        sender: 'ChatGpt',
+        direction: 'incoming',
+      },
+    ]);
+
+    // Generate a new conversation ID and add the conversation to the database
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const userId = user.uid;
+        const userRef = doc(db, 'users', userId); // Get the document reference to the current user
+        const newConversationRef = await addDoc(collection(userRef, 'conversations'), {
+          createdAt: serverTimestamp(),
+        });
+        setConversationId(newConversationRef.id);
+      }
+    } catch (e) {
+      console.error('Error creating new conversation: ', e);
+    }
+  };
+
   return (
     <div className="chat-ai">
       {!loading && !user &&  <SignIn handleSignIn={handleSignIn} handleSignInWithEmail={handleSignInWithEmail} handleSignUpWithEmail={handleSignUpWithEmail} />}
@@ -217,7 +244,8 @@ function ChatAI() {
             handleSignOut={handleSignOut}
             systemMessageText={systemMessageText}
             setSystemMessageText={setSystemMessageText}
-            />
+          />
+          {/* <button onClick={handleNewConversation} className="new-conversation-button">+</button> */}
           <div className="chat-container" style={{ overflowY: 'scroll' }} ref={messageListRef}>
             <div className="message-list-container">
               <div className="message-list">
@@ -263,6 +291,9 @@ function ChatAI() {
           </div>
 
           <div className="message-input-container">
+          <button onClick={handleNewConversation} className="input-buttons new-conversation-button">
+            <i className="fa fa-comments" aria-hidden="true"></i>
+          </button>
             <input
               className="message-input"
               type="text"
@@ -275,7 +306,7 @@ function ChatAI() {
               }}
             />
             <button
-              className="send-button"
+              className="input-buttons send-button"
               onClick={handleButtonClick}
             >
               <i className="fa fa-paper-plane" aria-hidden="true"></i>
