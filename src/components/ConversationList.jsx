@@ -30,20 +30,28 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
           });
         });
         setConversations(conversationsArray);
-      } // <-- Clear user email when user logs out
+      } 
     };
   
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribeAuth = auth.onAuthStateChanged((user) => {
       if (user) {
         fetchConversations();
       }
     });
   
+    const updateConversationListener = () => {
+      fetchConversations();
+    };
+  
+    // Listen to the 'update-conversation' event
+    document.addEventListener('update-conversation', updateConversationListener);
+  
     return () => {
-      unsubscribe();
+      unsubscribeAuth();
+      // Remove the event listener when the component unmounts
+      document.removeEventListener('update-conversation', updateConversationListener);
     };
   }, []);
-  
 
   const handleConversationClick = (conversation) => {
     setConversationId(conversation.id);

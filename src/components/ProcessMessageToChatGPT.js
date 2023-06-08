@@ -132,6 +132,9 @@ const processMessageToChatGPT = async (
           }),
           lastUpdated: serverTimestamp(),
         });
+
+        // Emit a custom event right after the conversation document is updated to update the history
+        document.dispatchEvent(new CustomEvent('update-conversation'));
       } else {
         console.error('Error: User not authenticated.');
       }
