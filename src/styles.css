@@ -173,6 +173,10 @@ p {
   color: white; 
 }
 
+summary::marker {
+  font-size: 15px
+}
+
 .dropdown {
   padding: 5px
 }
@@ -183,7 +187,8 @@ p {
 
 .conversation-item {
   box-shadow: 0px 4px 12px rgba(21, 20, 20, 0.5);
-  padding: 7px 15px;
+  padding: 7px 20px;
+  color: rgb(184, 182, 182);
 }
 
 .conversation-item:hover {
@@ -203,6 +208,11 @@ p {
 .sign-out {
   font-weight:600;
   color: #007bff;
+  padding-left: 20px;
+}
+
+.sign-out:hover {
+  color: #2b8ef8;
 }
 
 .signin-container {
@@ -325,6 +335,28 @@ p {
     padding-left: 10px;
   }
 
+  summary {
+    list-style: none; /* Hides the default style::marker so that we can add a customer one */
+    display: flex;
+    align-items: center;
+  }
+  
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  
+  summary::before {
+    content: "▶";
+    /* content: ">"; */
+    font-size: 12px;
+    color: white;
+    margin-right: 5px; 
+  }
+
+  .sign-out {
+    padding-left: 19px;
+  }
+
   .conversation-list {
     position: absolute;
     left: 0;
@@ -334,9 +366,7 @@ p {
   }
 
   .conversation-item {
-    padding: 5px 10px;
-    /* color: #00BFFF; */
-    /* font-weight: bold; */
+    padding: 5px 20px;
   }
 
   .menu-icon {

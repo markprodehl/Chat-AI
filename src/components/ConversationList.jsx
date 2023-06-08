@@ -97,7 +97,8 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
       {isOpen && (
         <>
           <details className="dropdown">
-            <summary style={{ listStyle: 'none' }}>Conversation History</summary>
+            <summary>Conversation History</summary>
+            {/* <summary style={{ listStyle: 'none' }}>Conversation History</summary> */}
             {conversations.slice().map((conversation, index) => {
               const firstMessage = conversation.messages[0]?.userMessage || '';
               const previewText = firstMessage.length > 30
@@ -117,7 +118,8 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
           </details>
           
           <details className="dropdown">
-            <summary style={{ listStyle: 'none' }}>Personality Settings</summary>
+            <summary>Personality Settings</summary>
+            {/* <summary style={{ listStyle: 'none' }}>Personality Settings</summary> */}
             {personalityOptions.map((option, index) => (
               <div
                 key={index}
