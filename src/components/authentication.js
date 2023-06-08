@@ -37,7 +37,6 @@ const signUpWithEmail = async (email, password) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-
     // Create a new document in the 'users' collection
     const userRef = doc(db, 'users', user.uid);
     await setDoc(userRef, {
@@ -48,12 +47,11 @@ const signUpWithEmail = async (email, password) => {
       systemMessageText: "Explain all concepts like I am 10 years old.", // default systemMessageText
       createdAt: serverTimestamp(),
     });
-
     return user; 
   } catch (error) {
     console.error(error);
     if (error.code === 'auth/email-already-in-use') {
-      throw new Error('An account exists with this email. Please sign in.');
+      throw new Error('An account already exists with this email. Please sign in.');
     } else if (error.code === 'auth/weak-password') {
       throw new Error('Password should be at least 6 characters');
     } else {
@@ -72,15 +70,7 @@ const signInWithEmail = async (email, password) => {
     const userRef = doc(db, 'users', user.uid);
     const docSnap = await getDoc(userRef);
     if (!docSnap.exists()) {
-      // New user - create a new document in the 'users' collection with default systemMessageText
-      await setDoc(userRef, {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        systemMessageText: "Explain all concepts like I am 10 years old.", // default systemMessageText
-        createdAt: serverTimestamp(),
-      });
+      throw new Error('No account exists with this email. Please sign up.');
     } else {
       // Existing user - retrieve the systemMessageText
       user.systemMessageText = docSnap.data().systemMessageText;
@@ -92,6 +82,8 @@ const signInWithEmail = async (email, password) => {
       throw new Error('Incorrect password. Please try again.');
     } else if (error.code === 'auth/user-not-found') {
       throw new Error('No account exists with this email. Please sign up.');
+    } else if (error.code === 'auth/invalid-email') {
+      throw new Error('The email address is not valid.');
     } else if (error.code === 'auth/missing-password') {
       throw new Error('You need a password.');
     } else {
