@@ -30,20 +30,28 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
           });
         });
         setConversations(conversationsArray);
-      } // <-- Clear user email when user logs out
+      } 
     };
   
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribeAuth = auth.onAuthStateChanged((user) => {
       if (user) {
         fetchConversations();
       }
     });
   
+    const updateConversationListener = () => {
+      fetchConversations();
+    };
+  
+    // Listen to the 'update-conversation' event
+    document.addEventListener('update-conversation', updateConversationListener);
+  
     return () => {
-      unsubscribe();
+      unsubscribeAuth();
+      // Remove the event listener when the component unmounts
+      document.removeEventListener('update-conversation', updateConversationListener);
     };
   }, []);
-  
 
   const handleConversationClick = (conversation) => {
     setConversationId(conversation.id);
@@ -89,7 +97,8 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
       {isOpen && (
         <>
           <details className="dropdown">
-            <summary style={{ listStyle: 'none' }}>Conversation History</summary>
+            <summary>Conversation History</summary>
+            {/* <summary style={{ listStyle: 'none' }}>Conversation History</summary> */}
             {conversations.slice().map((conversation, index) => {
               const firstMessage = conversation.messages[0]?.userMessage || '';
               const previewText = firstMessage.length > 30
@@ -109,7 +118,8 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
           </details>
           
           <details className="dropdown">
-            <summary style={{ listStyle: 'none' }}>Personality Settings</summary>
+            <summary>Personality Settings</summary>
+            {/* <summary style={{ listStyle: 'none' }}>Personality Settings</summary> */}
             {personalityOptions.map((option, index) => (
               <div
                 key={index}
