@@ -98,6 +98,7 @@ function ChatAI() {
   };    
 
   const handleSignOut = async () => {
+    handleNewConversation()
     await signOut();
     setUser(null);
   };
@@ -245,7 +246,6 @@ function ChatAI() {
             systemMessageText={systemMessageText}
             setSystemMessageText={setSystemMessageText}
           />
-          {/* <button onClick={handleNewConversation} className="new-conversation-button">+</button> */}
           <div className="chat-container" style={{ overflowY: 'scroll' }} ref={messageListRef}>
             <div className="message-list-container">
               <div className="message-list">
