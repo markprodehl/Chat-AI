@@ -98,7 +98,13 @@ function ChatAI() {
   };    
 
   const handleSignOut = async () => {
-    handleNewConversation()
+    setMessages([
+      {
+        message: 'Hello, I am your AI assistant. Feel free to ask me anything.',
+        sender: 'ChatGpt',
+        direction: 'incoming',
+      },
+    ]);
     await signOut();
     setUser(null);
   };
