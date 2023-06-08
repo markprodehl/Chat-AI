@@ -44,6 +44,14 @@
   justify-content: flex-end;
 }
 
+p {
+  margin: 0;
+}
+
+.paragraph {
+  margin-bottom: 10px;
+}
+
 .message-list {
   display: flex;
   flex-direction: column;
@@ -62,6 +70,10 @@
   align-self: flex-end;
   background-color: #00BFFF;
   color: #FFF;
+}
+
+.message-outgoing-bubble {
+  margin-bottom: 0;
 }
 
 .message-incoming {

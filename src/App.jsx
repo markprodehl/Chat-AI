@@ -14,6 +14,7 @@ import SignIn from './components/SignIn';
 
 import { collection, addDoc, serverTimestamp, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db, auth } from './config/firebaseConfig';
+import messageContentFormatter from './components/messageContentFormatter'
 
 function ChatAI() {
   const VITE_MY_OPENAI_API_KEY = import.meta.env.VITE_MY_OPENAI_API_KEY;
@@ -205,65 +206,6 @@ function ChatAI() {
     inputElement.value = '';
   };
 
-  function formatLists(text) {
-    // Split the input text into individual lines.
-    const lines = text.split('\n');
-  
-    // Initialize an empty list to hold list items.
-    let list = [];
-  
-    // Initialize an empty list to hold the formatted lines of text.
-    let formattedLines = [];
-  
-    // This function processes the list items collected so far and appends the
-    // corresponding HTML list to the formatted lines of text.
-    const processList = () => {
-      if (list.length > 0) {
-        // Determine whether to use an unordered list (<ul>) or an ordered list (<ol>)
-        // based on whether the first list item starts with "* ", "- " (asterisk or dash followed by space).
-        let listType = (list[0].startsWith('* ') || list[0].startsWith('- ')) ? 'ul' : 'ol';
-  
-        // Create the HTML list and append it to the formatted lines of text.
-        formattedLines.push(
-          React.createElement(
-            listType,
-            null,
-            list.map((item, index) => {
-              // Remove the list marker ("* ", "- " or "N. ") from the start of the item.
-              const content = item.startsWith('* ') ? item.slice(2) : item.startsWith('- ') ? item.slice(2) : item.slice(item.indexOf('.') + 2);
-              // Return an HTML list item (<li>).
-              return <li key={index}>{content}</li>;
-            })
-          )
-        );
-        
-        // Clear the list items.
-        list = [];
-      }
-    };
-  
-    // Iterate over the lines of text.
-    for (let i = 0; i < lines.length; i++) {
-      let line = lines[i];
-  
-      // If the line is a list item (starts with "* ", "- " or "N. "), add it to the list of items.
-      // Otherwise, process the list items collected so far and add the line to the formatted lines of text.
-      if (line.startsWith('* ') || line.startsWith('- ') || line.match(/^\d+\./)) {
-        list.push(line);
-      } else {
-        processList();
-        formattedLines.push(line);
-      }
-    }
-  
-    // Process any remaining list items.
-    processList(); 
-    
-    // Return the formatted lines of text.
-    return formattedLines;
-  }
-
-  
   return (
     <div className="chat-ai">
       {!loading && !user &&  <SignIn handleSignIn={handleSignIn} handleSignInWithEmail={handleSignInWithEmail} handleSignUpWithEmail={handleSignUpWithEmail} />}
@@ -280,7 +222,6 @@ function ChatAI() {
             <div className="message-list-container">
               <div className="message-list">
                 {messages.map((message, i) => {
-                  // Split the message into different parts based on '```' delimiter
                   const messageParts = message.message.split('```');
                   return (
                     <div
@@ -294,28 +235,23 @@ function ChatAI() {
                         if (isCodeSnippet) {
                           const codeLanguage = messagePart.split('\n')[0];
                           const codeSnippet = messagePart.replace(codeLanguage + '\n', '');
-                  
+
                           return (
-                            <SyntaxHighlighter className="highlighter"language={codeLanguage || 'javascript'} style={twilight} key={`${i}-${j}`}>
+                            <SyntaxHighlighter
+                              className="highlighter"
+                              language={codeLanguage || 'javascript'}
+                              style={twilight}
+                              key={`${i}-${j}`}
+                            >
                               {codeSnippet}
                             </SyntaxHighlighter>
                           );
                         } else {
-                          const inlineCodeParts = messagePart.split('`');
-                          return inlineCodeParts.map((inlinePart, k) => {
-                            const isInlineCode = k % 2 === 1;
-                            if (isInlineCode) {
-                              return <span className="inline-code" key={`${i}-${j}-${k}`}>{inlinePart}</span>
-                            } else {
-                              return formatLists(inlinePart).map((formattedLine, l) => (
-                                <span key={`${i}-${j}-${k}-${l}`}>{formattedLine}</span>
-                              ));
-                            }
-                          });
+                          return messageContentFormatter(messagePart, message.direction === 'outgoing');
                         }
                       })}
                     </div>
-                  );                  
+                  );
                 })}
                 {typing && (
                   <div className="message message-incoming typing-indicator typing-animation">
@@ -346,7 +282,7 @@ function ChatAI() {
             </button>
           </div>
           
-          {/* To display the personality options select at teh bottom of the view */}
+          {/* To display the personality options select at the bottom of the view */}
           {/* <div className="system-message-container">
             <label htmlFor="system-message-input">Personality: </label>
             <select
