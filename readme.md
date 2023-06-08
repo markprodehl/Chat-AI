@@ -9,8 +9,9 @@ Link to the deployed application - https://chat-ai-c95f1.web.app/
 - Google Authentication
 - Chat interface with real-time messages
 - Typing effect for the AI assistant
+- Hard coded message content formatter
 - SyntaxHighlighter that formats code into readable snippets
-- System message that defines AI assistant's behaviour
+- System message that defines AI assistant's behavior
 - Data storage in Firestore DB
 
 ## Main Libraries Used
@@ -20,6 +21,7 @@ Link to the deployed application - https://chat-ai-c95f1.web.app/
 - Firebase Firestore
 - Google Authentication
 - Font-awesome
+- SyntaxHighlighter
 
 ## Installation
 
