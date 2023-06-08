@@ -1,4 +1,3 @@
-import React from 'react'
 import { useState, useRef, useEffect } from 'react';
 import './styles.css';
 import 'font-awesome/css/font-awesome.min.css';
@@ -297,9 +296,9 @@ function ChatAI() {
           </div>
 
           <div className="message-input-container">
-          <button onClick={handleNewConversation} className="input-buttons new-conversation-button">
-            <i className="fa fa-comments" aria-hidden="true"></i>
-          </button>
+            <button onClick={handleNewConversation} className="input-buttons new-conversation-button">
+              <i className="fa fa-comments" aria-hidden="true"></i>
+            </button>
             <input
               className="message-input"
               type="text"
