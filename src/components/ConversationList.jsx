@@ -14,6 +14,7 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
   const conversationListRef = useRef(null); 
   const [currentConversationId, setCurrentConversationId] = useState(null);
 
+
   const handleDeleteConversation = async (conversationId) => {
     if(window.confirm('Are you sure you want to delete this conversation?')) {
       const user = auth.currentUser;
@@ -26,7 +27,13 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
         if (conversationId === currentConversationId) {
           setConversationId(null);
           setCurrentConversationId(null);
-          setMessages([]);
+          setMessages([
+            {
+              message: 'Hello, I am your AI assistant. Feel free to ask me anything.',
+              sender: 'ChatGpt',
+              direction: 'incoming',
+            },
+          ]);
         }
   
         // refresh the conversation list after deletion
@@ -35,6 +42,7 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
     }
   };
   
+
   useEffect(() => {
     let unsubscribeFromConversations;
 
