@@ -1,16 +1,43 @@
 import { useEffect, useState, useRef } from 'react';
-import { collection, getDocs, query, orderBy, doc } from 'firebase/firestore';
+import { collection, query, orderBy, doc, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { db, auth } from '/src/config/firebaseConfig.js';
 import PropTypes from 'prop-types';
 import { IoIosMenu } from 'react-icons/io';
 import personalityOptions from './PersonalityOptions';
+import 'font-awesome/css/font-awesome.min.css';
+import { AiFillDelete } from 'react-icons/ai';
+
 function ConversationList({ setConversationId, setMessages, handleSignOut, systemMessageText, setSystemMessageText}) {
   const [conversations, setConversations] = useState([]);
   const [userEmail, setUserEmail] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const conversationListRef = useRef(null); 
+  const [currentConversationId, setCurrentConversationId] = useState(null);
 
+  const handleDeleteConversation = async (conversationId) => {
+    if(window.confirm('Are you sure you want to delete this conversation?')) {
+      const user = auth.currentUser;
+      if(user) {
+        const userId = user.uid;
+        const conversationRef = doc(db, 'users', userId, 'conversations', conversationId);
+        await deleteDoc(conversationRef);
+  
+        // If the deleted conversation is the current one, clear the view
+        if (conversationId === currentConversationId) {
+          setConversationId(null);
+          setCurrentConversationId(null);
+          setMessages([]);
+        }
+  
+        // refresh the conversation list after deletion
+        // fetchConversations();
+      }
+    }
+  };
+  
   useEffect(() => {
+    let unsubscribeFromConversations;
+
     const fetchConversations = async () => {
       const user = auth.currentUser;
       if (user) {
@@ -21,40 +48,37 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
           collection(userRef, 'conversations'),
           orderBy('lastUpdated', 'desc')
         );
-        const querySnapshot = await getDocs(q);
-        const conversationsArray = [];
-        querySnapshot.forEach((doc) => {
-          conversationsArray.push({
-            id: doc.id,
-            ...doc.data(),
+
+        unsubscribeFromConversations = onSnapshot(q, (snapshot) => {
+          const conversationsArray = [];
+          snapshot.forEach((doc) => {
+            conversationsArray.push({
+              id: doc.id,
+              ...doc.data(),
+            });
           });
+          setConversations(conversationsArray);
         });
-        setConversations(conversationsArray);
       } 
     };
-  
+
     const unsubscribeAuth = auth.onAuthStateChanged((user) => {
       if (user) {
         fetchConversations();
       }
     });
-  
-    const updateConversationListener = () => {
-      fetchConversations();
-    };
-  
-    // Listen to the 'update-conversation' event
-    document.addEventListener('update-conversation', updateConversationListener);
-  
+
     return () => {
       unsubscribeAuth();
-      // Remove the event listener when the component unmounts
-      document.removeEventListener('update-conversation', updateConversationListener);
+      if (unsubscribeFromConversations) {
+        unsubscribeFromConversations();
+      }
     };
   }, []);
 
   const handleConversationClick = (conversation) => {
     setConversationId(conversation.id);
+    setCurrentConversationId(conversation.id); // add this line
   
     const messagesArray = conversation.messages.flatMap((messageObj) => [
       {
@@ -72,6 +96,7 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
     setMessages(messagesArray);
     setIsOpen(false); // close the menu when a conversation is clicked
   };
+  
   
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -112,6 +137,14 @@ function ConversationList({ setConversationId, setMessages, handleSignOut, syste
                   onClick={() => handleConversationClick(conversation)}
                 >
                   {previewText}
+                  <AiFillDelete
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteConversation(conversation.id);
+                    }}
+                    size={20}
+                    style={{ marginLeft: '10px', cursor: 'pointer' }}
+                  />
                 </div>
               );
             })}
