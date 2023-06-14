@@ -38,7 +38,7 @@ const processMessageToChatGPT = async (
   };
 
   const apiRequestBody = {
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-3.5-turbo-0613',
     messages: [
       systemMessage, // Putting this at the front of the messages is require within the messages array to get processed
       ...apiMessages, // [message1, message2, message3]
