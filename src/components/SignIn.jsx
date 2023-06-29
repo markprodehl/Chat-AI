@@ -3,6 +3,10 @@ import PropTypes from 'prop-types';
 import { BounceLoader } from "react-spinners";
 import googleIcon from '../../public/google_signin_light.png';
 import '../styles.css';
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { handleForgotPassword } from './authentication';
+
+const auth = getAuth();
 
 const SignIn = ({ handleSignIn, handleSignInWithEmail, handleSignUpWithEmail }) => {
   const [email, setEmail] = useState('');
@@ -43,6 +47,21 @@ const SignIn = ({ handleSignIn, handleSignInWithEmail, handleSignUpWithEmail }) 
     }
   }
 
+  const handleForgotPasswordClick = async () => {
+    if (!email) {
+      setError("Please input your email first.");
+      return;
+    }
+    try {
+      const message = await handleForgotPassword(email);
+      setError(message);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  
+
   return (
     <div className="signin-container">
       <h1 className="chat-ai-header">Chat AI</h1>
@@ -55,7 +74,7 @@ const SignIn = ({ handleSignIn, handleSignInWithEmail, handleSignUpWithEmail }) 
         />
       ) : (
         <>
-          {error && <p className="error-message">{error}</p>}
+          {error ? <div><p className="error-message">{error}</p></div> : <div className="blank-error">I am transparent</div>}
           <div className="signin-form">
             <input 
               type="email" 
@@ -83,6 +102,7 @@ const SignIn = ({ handleSignIn, handleSignInWithEmail, handleSignUpWithEmail }) 
           <button className="google-btn" onClick={handleGoogleSignIn}>
             <img className="google-icon" src={googleIcon} alt="Google sign-in" />
           </button>
+          <div className="forgot-password" onClick={handleForgotPasswordClick}>Forgot Password?</div>
         </>
       )}
     </div>

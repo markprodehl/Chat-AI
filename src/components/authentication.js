@@ -1,4 +1,4 @@
-import { signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, getAuth } from 'firebase/auth';
 import { auth, db } from '../config/firebaseConfig';
 import { setDoc, doc, getDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -92,6 +92,21 @@ const signInWithEmail = async (email, password) => {
   }
 };
 
+const handleForgotPassword = async (email) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    return "Password reset email has been sent.";
+  } catch (error) {
+    let errorMessage = "Error resetting password.";
+    if (error.code === "auth/invalid-email") {
+      errorMessage = "The email address is not valid.";
+    } else if (error.code === "auth/user-not-found") {
+      errorMessage = "There is no user record of this email.";
+    }
+    throw new Error(errorMessage);
+  }
+};
+
 const signOut = async () => {
   try {
     await auth.signOut();
@@ -100,4 +115,4 @@ const signOut = async () => {
   }
 };
 
-export { signIn, signInWithEmail, signUpWithEmail, signOut };
+export { signIn, signInWithEmail, signUpWithEmail, handleForgotPassword, signOut };
