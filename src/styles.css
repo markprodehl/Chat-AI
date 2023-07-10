@@ -48,6 +48,7 @@
   float: right;
   margin-top: -20px;
   cursor: pointer;
+  /* font-size: 18px; */
 }
 
 .delete-icon-green {
@@ -56,8 +57,9 @@
 
 .checkbox {
   float: right;
-  cursor: pointer;
   font-size: 5px;
+  cursor: pointer;
+  transform: scale(0.9);
 }
 
 p {

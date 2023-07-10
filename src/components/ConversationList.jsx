@@ -91,6 +91,8 @@ function ConversationList({
         !conversationListRef.current.contains(event.target)
       ) {
         setIsOpen(false);
+        setDeletionMode(false);
+        setDeleteIconColor('');
       }
     };
     
