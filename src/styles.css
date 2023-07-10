@@ -44,6 +44,22 @@
   justify-content: flex-end;
 }
 
+.delete-icon {
+  float: right;
+  margin-top: -20px;
+  cursor: pointer;
+}
+
+.delete-icon-green {
+  color: #228B22;
+}
+
+.checkbox {
+  float: right;
+  cursor: pointer;
+  font-size: 5px;
+}
+
 p {
   margin: 0;
 }
@@ -226,7 +242,6 @@ summary::marker {
 .dropdown:hover {
   font-weight: 700
 }
-
 
 .selected-option {
   color: #007bff;
