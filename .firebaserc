@@ -1,5 +1,16 @@
 {
   "projects": {
     "default": "chat-ai-c95f1"
-  }
+  },
+  "targets": {
+    "chat-ai-c95f1": {
+      "hosting": {
+        "chat-ai": [
+          "chat-ai-c95f1"
+        ]
+      }
+    }
+  },
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }

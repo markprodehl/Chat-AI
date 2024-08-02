@@ -4,6 +4,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
+    "target": "chat-ai",
     "public": "dist",
     "ignore": [
       "firebase.json",
